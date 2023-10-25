@@ -1,0 +1,59 @@
+<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	 <meta charset="UTF-8">
+	<style>
+        /* 전체 페이지 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 사이드바 스타일 */
+        .sidebar {
+            width: 250px;
+		    position: fixed;
+		    z-index: 1; /* 사이드 바는 본문 위에 나타납니다. */
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+        }
+        
+        /* 본문 스타일 */
+        .content {
+            margin-left: 300px; /* 사이드바의 너비만큼 오른쪽으로 이동 */
+            z-index: 0;
+            padding: 20px;
+        }
+    </style>
+
+</head>
+<body>
+	<div class="sidebar">
+        <h2>사이드바</h2>
+        <p>사이드바 내용이 여기에 들어갑니다.</p>
+    </div>
+
+    
+    <div class="content">
+        <h1>로그인 성공!</h1>
+		<h3>놀랍지만 메인 페이지입니다.</h3>
+		<div>
+		    <span th:text="|${userInfo.userid} 님 환영합니다.|"></span>
+		<br>
+		    <span th:if="${userInfo.password} != null"  
+		    	th:text="|${userInfo.password}  !!! 비번 유출 주의|"></span>
+		<br>
+			<span th:text="|${userInfo.text} 자기소개|"></span>  
+		<br>
+			<span th:text="|${userInfo.img} 프로필사진|"></span>  
+		  			  	
+		</div>
+		<button type="button" class="btn btn-secondary" onclick="location.href='/logout'">로그아웃</button>
+    </div>
+	
+	</body>
+</html>
