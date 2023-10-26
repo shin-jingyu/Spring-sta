@@ -41,5 +41,7 @@ public class User {
 	
 	private UserRole role;
 	
+	private String provider;
+	private String providerId;
 	
 }

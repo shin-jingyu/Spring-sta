@@ -24,11 +24,14 @@ public class JoinRequest {
 	
 	private String img;
 	
+	private UserRole role;
+	
 	public User toEntity(String encodedPassword) {
         return User.builder()
                 .userid(this.userid)
                 .password(encodedPassword)
                 .nickname(this.nickname)
+                .role(UserRole.USER)
                 .build();
     }
 	
