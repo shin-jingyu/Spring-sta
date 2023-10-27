@@ -1,4 +1,4 @@
-package com.sta.config;
+package com.sta.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

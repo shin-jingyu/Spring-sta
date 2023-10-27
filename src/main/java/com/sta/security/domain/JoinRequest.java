@@ -1,4 +1,4 @@
-package com.sta.domain;
+package com.sta.security.domain;
 
 
 import jakarta.validation.constraints.NotBlank;

@@ -17,7 +17,28 @@
             <button th:onclick="|location.href='@{/{loginType}/info (loginType=${loginType})}'|">유저 정보</button> <br/><br/>
             <button th:onclick="|location.href='@{/{loginType}/admin (loginType=${loginType})}'|">관리자 페이지</button> <br/><br/>
             <button th:onclick="|location.href='@{/{loginType}/logout (loginType=${loginType})}'|">로그아웃</button>
+            <button th:onclick="|location.href='@{/board/write}'|">게시물 작성</button>
         </div>
     </div>
+    
+    <div class="container" layout:fragment="content">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th class="col-md-1">번호</th>
+            <th class="col-md-1">제목</th>
+            <th class="col-md-1">작성자</th>
+            <th class="col-md-1">작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="board : ${boardList}">
+            <td th:text="${board.boardid}"></td>
+            <td><a th:href="@{/board/{boardid}(boardid=${board.boardid})}" th:text="${board.title}"></a></td>
+            <td th:text="${board.nickname}"></td>
+            <td th:text="${board.createdAt} ? ${#temporals.format(board.createdAt,'yyyy-MM-dd HH:mm')} : ${board.createdAt}"></td>
+        </tr>
+        </tbody>
+    </table>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.sta.config;
+package com.sta.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +10,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
-import com.sta.domain.UserRole;
-import com.sta.service.PrincipalOauth2UserService;
+import com.sta.security.domain.UserRole;
+import com.sta.security.service.PrincipalOauth2UserService;
 
 import lombok.RequiredArgsConstructor;
 

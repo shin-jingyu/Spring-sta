@@ -1,4 +1,4 @@
-package com.sta.domain;
+package com.sta.security.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

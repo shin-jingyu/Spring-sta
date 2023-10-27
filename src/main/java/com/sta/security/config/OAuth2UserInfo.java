@@ -1,4 +1,4 @@
-package com.sta.domain;
+package com.sta.security.config;
 
 public interface OAuth2UserInfo {
 	String getProviderId();

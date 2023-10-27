@@ -1,13 +1,13 @@
-package com.sta.service;
+package com.sta.security.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.sta.domain.PrincipalDetails;
-import com.sta.domain.User;
-import com.sta.repository.UserRepository;
+import com.sta.security.domain.PrincipalDetails;
+import com.sta.security.domain.User;
+import com.sta.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

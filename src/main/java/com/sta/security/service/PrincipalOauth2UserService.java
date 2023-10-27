@@ -1,4 +1,4 @@
-package com.sta.service;
+package com.sta.security.service;
 
 import java.util.Map;
 import java.util.Optional;
@@ -10,14 +10,14 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.sta.domain.GoogleUserInfo;
-import com.sta.domain.KakaoUserInfo;
-import com.sta.domain.NaverUserInfo;
-import com.sta.domain.OAuth2UserInfo;
-import com.sta.domain.PrincipalDetails;
-import com.sta.domain.User;
-import com.sta.domain.UserRole;
-import com.sta.repository.UserRepository;
+import com.sta.security.config.GoogleUserInfo;
+import com.sta.security.config.KakaoUserInfo;
+import com.sta.security.config.NaverUserInfo;
+import com.sta.security.config.OAuth2UserInfo;
+import com.sta.security.domain.PrincipalDetails;
+import com.sta.security.domain.User;
+import com.sta.security.domain.UserRole;
+import com.sta.security.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

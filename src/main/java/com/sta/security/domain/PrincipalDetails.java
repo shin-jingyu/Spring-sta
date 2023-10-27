@@ -1,4 +1,4 @@
-package com.sta.domain;
+package com.sta.security.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,6 @@
-package com.sta.controller;
+package com.sta.security.controller;
+
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -10,10 +12,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.sta.domain.JoinRequest;
-import com.sta.domain.LoginRequest;
-import com.sta.domain.User;
-import com.sta.service.UserService;
+import com.sta.board.domain.BoardResponseDTO;
+import com.sta.board.service.BoardService;
+import com.sta.security.domain.JoinRequest;
+import com.sta.security.domain.LoginRequest;
+import com.sta.security.domain.User;
+import com.sta.security.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +28,14 @@ import lombok.RequiredArgsConstructor;
 public class SecurityLoginController {
 	
 	private final UserService userService;
+	private final BoardService boardService;
 	
 	@GetMapping(value = {"", "/"})
     public String home(Model model, Authentication auth) {
-        model.addAttribute("loginType", "security-login");
+        List<BoardResponseDTO> dto = boardService.boardList();
+		model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "Security 로그인");
-
+        model.addAttribute("boardList",dto);
         if(auth != null) {
             User loginUser = userService.getLoginUserByLoginId(auth.getName());
             if (loginUser != null) {

@@ -1,15 +1,14 @@
-package com.sta.service;
+package com.sta.security.service;
 
 import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.sta.domain.JoinRequest;
-import com.sta.domain.LoginRequest;
-import com.sta.domain.User;
-
-import com.sta.repository.UserRepository;
+import com.sta.security.domain.JoinRequest;
+import com.sta.security.domain.LoginRequest;
+import com.sta.security.domain.User;
+import com.sta.security.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
