@@ -1,5 +1,10 @@
 package com.sta.board.domain;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.sta.security.domain.User;
 
 import jakarta.persistence.Column;
@@ -21,7 +26,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "board")
-public class Board extends BaseEntity{
+public class Board {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardid;
@@ -32,7 +37,24 @@ public class Board extends BaseEntity{
     @Column(nullable = false)
     private String content;
     
+    @CreationTimestamp
+	@Column(updatable = false)
+	private LocalDateTime createdAt;
+
+	@UpdateTimestamp
+	@Column(insertable = false)
+	private LocalDateTime updatedAt;
+    
     @ManyToOne
     @JoinColumn(name = "id")
     private User user;
+    
+    public void update(String title,String content, User user) {
+    	this.title = title;
+    	this.content = content;
+    	this.user = user;
+    	this.updatedAt = LocalDateTime.now(); 
+    	
+    }
+    
 }

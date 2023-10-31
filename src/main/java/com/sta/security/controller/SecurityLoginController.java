@@ -32,7 +32,7 @@ public class SecurityLoginController {
 	
 	@GetMapping(value = {"", "/"})
     public String home(Model model, Authentication auth) {
-        List<BoardResponseDTO> dto = boardService.boardList();
+        List<BoardResponseDTO> dto = boardService.findAll();
 		model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "Security 로그인");
         model.addAttribute("boardList",dto);

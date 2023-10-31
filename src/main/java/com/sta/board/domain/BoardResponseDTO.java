@@ -14,6 +14,7 @@ public class BoardResponseDTO {
 	private String content;
 	private String nickname;
 	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 	private String userid ; 
 	
 	@Builder

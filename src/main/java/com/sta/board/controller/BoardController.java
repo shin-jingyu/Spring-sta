@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.sta.board.domain.BoardRequestDto;
 import com.sta.board.domain.BoardResponseDTO;
 import com.sta.board.domain.BoardWriteRequestDTO;
 import com.sta.board.service.BoardService;
@@ -23,20 +24,11 @@ public class BoardController {
 	
 	private final BoardService boardService;
 	
-	
-	
-	
-	//게시글 작성 페이지
-	@GetMapping("/write")
-	public String writeForm() {
-		return "board/write";
-	}
-	
-	// 게시글 생성
+	// 게시글 업로드
 	@PostMapping("/write")
-	public String write(BoardWriteRequestDTO boardWriteRequestDTO, Authentication authentication ) {
+	public String write(BoardRequestDto boardRequestDto, Authentication authentication ) {
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-		boardService.saveBoard(boardWriteRequestDTO, userDetails.getUsername());
+		boardService.save(boardRequestDto, userDetails.getUsername());
 		return "redirect:/security-login";
 	}
 	
