@@ -46,38 +46,27 @@
     </table>
     
     <!-- --------modal----------------------------------------------------------------------------------- -->
-    
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal" data-bs-whatever="@mdo">글작성</button>
-    
-    <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h1 class="modal-title fs-5" id="ModalLabel">글작성</h1>
-	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-	      </div>
-	      <div class="modal-body">
-	        <form method="post" enctype="multipart/form-data" action="/board/write">
-	          <div class="mb-3">
-	            <label for="recipient-name" class="col-form-label">제목:</label>
-	            <input type="text" class="form-control" name="title" id="title" required >
-	          </div>
-	          <div class="mb-3">
-	            <label for="message-text" class="col-form-label">내용:</label>
-	            <textarea class="form-control" name="content" id="content" required></textarea>
-	          </div>
-	        
-	      </div>
-	      <div class="modal-footer">
-	       
-	        <button type="submit" class="btn btn-primary">업로드</button>
-	     </form>
-	      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-	      </div>
-	      
-	    </div>
-	  </div>
-	</div>
-	
+ 
 </body>
+<script>
+// RESTful API 엔드포인트
+var apiURL = '/api/board';
+
+// 페이지 로드 시 데이터 가져오기
+$(document).ready(function() {
+    $.get(apiURL, function(data) {
+        // JSON 데이터를 반복하여 HTML에 추가
+        data.forEach(function(item) {
+            $('#boardTableBody').append(`
+                <tr>
+                    <td>${item.boardid}</td>
+                    <td><a href="/board/${item.boardid}">${item.title}</a></td>
+                    <td>${item.nickname}</td>
+                    <td>${item.createdAt}</td>
+                </tr>
+            `);
+        });
+    });
+});
+</script>
 </html>
