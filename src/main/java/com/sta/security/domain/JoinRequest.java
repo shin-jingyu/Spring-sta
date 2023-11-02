@@ -31,6 +31,7 @@ public class JoinRequest {
                 .userid(this.userid)
                 .password(encodedPassword)
                 .nickname(this.nickname)
+                .img(this.img)
                 .role(UserRole.USER)
                 .build();
     }

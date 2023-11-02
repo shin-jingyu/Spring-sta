@@ -1,0 +1,22 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.sidebar {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 20%; /* 1fr로 설정 */
+    height: 100%;
+    float: left; /* 왼쪽으로 띄우기 */
+}
+
+.content {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    width: 80%; /* 3fr로 설정 */
+    float: left; /* 왼쪽으로 띄우기 */
+}

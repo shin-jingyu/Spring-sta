@@ -1,5 +1,6 @@
 package com.sta.security.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import com.sta.board.service.BoardService;
 import com.sta.security.domain.JoinRequest;
 import com.sta.security.domain.LoginRequest;
 import com.sta.security.domain.User;
+import com.sta.security.service.UserImageService;
 import com.sta.security.service.UserService;
 
 import jakarta.validation.Valid;
@@ -29,6 +31,7 @@ public class SecurityLoginController {
 	
 	private final UserService userService;
 	private final BoardService boardService;
+	private final UserImageService imageService;
 	
 	@GetMapping(value = {"", "/"})
     public String home(Model model, Authentication auth) {
@@ -56,7 +59,7 @@ public class SecurityLoginController {
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) {
+    public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) throws IOException {
         model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "Security 로그인");
 
@@ -76,7 +79,8 @@ public class SecurityLoginController {
         if(bindingResult.hasErrors()) {
             return "join";
         }
-
+        
+        imageService.finalImage(joinRequest.getImg());
         userService.join(joinRequest);
         return "redirect:/security-login";
     }
