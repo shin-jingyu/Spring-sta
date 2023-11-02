@@ -12,7 +12,7 @@
 
 	<meta charset="UTF-8">
 
-	
+
 </head>
 
 <body>
@@ -30,7 +30,7 @@
 			</tbody>
 		</table>
 
-		<!-- Modal -->
+		<!-- 글작성 모달 -->
 		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal"
 			data-bs-whatever="@mdo">글작성</button>
 
@@ -42,16 +42,14 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<form id="createForm" method="post" action="/api/board">
-							<div class="mb-3">
-								<label for="title" class="col-form-label">제목:</label>
-								<input type="text" class="form-control" name="title" id="title" required>
-							</div>
-							<div class="mb-3">
-								<label for="content" class="col-form-label">내용:</label>
-								<textarea class="form-control" name="content" id="content" required></textarea>
-							</div>
-						</form>
+						<div class="mb-3">
+							<label for="title" class="col-form-label">제목:</label>
+							<input type="text" class="form-control" id="title" required>
+						</div>
+						<div class="mb-3">
+							<label for="content" class="col-form-label">내용:</label>
+							<textarea class="form-control" id="content" required></textarea>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" id="createButton" class="btn btn-primary">업로드</button>
@@ -59,90 +57,196 @@
 				</div>
 			</div>
 		</div>
-		
-		 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="detailModalLabel">글 상세보기</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- 상세 내용을 여기에 채웁니다. -->
-                </div>
-            </div>
-        </div>
-    </div>
-		
-		
+
+
+		<!-- 상세보기 모달------------------- -->
+		<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="detailModalLabel">글 상세보기</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<!-- 상세 내용을 여기에 채웁니다. -->
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="editButton" class="btn btn-primary">수정</button>
+						<button type="button" id="saveButton" class="btn btn-primary">저장</button>
+						<button type="button" id="deleteButton" class="btn btn-primary">삭제</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
 	</div>
 
-	
+
 </body>
 
 </html>
-<script>
-    $(document).ready(function () {
-        var apiURL = '/api/board';
-        var boardTableBody = $('#boardTableBody');
-        var createModal = $('#Modal'); // 글 작성 모달
-        var detailModal = $('#detailModal'); // 상세보기 모달
+<script th:inline="javascript">
+	$(document).ready(function () {
+		// 서버 API의 URL 및 필요한 HTML 엘리먼트 가져오기
+		var apiURL = '/api/board';
+		var boardTableBody = $('#boardTableBody');
+		var createModal = $('#Modal'); // 글 작성 모달
+		var detailModal = $('#detailModal'); // 상세보기 모달
+		var loggedInUserNickname = /*[[${nickname}]]*/'';
 
-        // 글 작성 폼 처리
-        $('#createButton').on('click', function () {
-            $.ajax({
-                url: apiURL,
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    title: $('#title').val(),
-                    content: $('#content').val()
-                }),
-                success: function (response) {
-                    // 글 작성 성공 시 모달 닫기
-                    createModal.modal('hide');
-                    // 목록 업데이트
-                    updateBoardList();
-                }
-            });
-        });
+		// 페이지가 로드될 때 게시글 목록을 업데이트
+		function updateBoardList() {
+			$.get(apiURL, function (data) {
+				boardTableBody.empty(); // 게시판 목록 초기화
 
-        function showDetail(boardid) {
-            $.get(apiURL + '/' + boardid, function (data) {
-                // Modal 내용을 채우기
-                detailModal.find('.modal-body').html(`
-                    <p><strong>제목:</strong> ${data.title}</p>
-                    <p><strong>내용:</strong> ${data.content}</p>
-                    <p><strong>작성자:</strong> ${data.nickname}</p>
-                    <p><strong>작성일:</strong> ${data.createdAt}</p>
+				// 각 게시글에 대한 정보를 목록에 추가
+				data.forEach(function (item) {
+					boardTableBody.append(`
+                    <tr>
+                        <td>${item.boardid}</td>
+                        <td><a href="#" class="show-details" data-boardid="${item.boardid}">${item.title}</a></td>
+                        <td>${item.nickname}</td>
+                        <td>${item.createdAt}</td>
+                    </tr>
                 `);
-                detailModal.modal('show');
-            });
-        }
+				});
+			});
+		}
 
-        // Modal 열기 버튼 클릭 이벤트 핸들러
-        boardTableBody.on('click', '.show-details', function () {
-            var boardid = $(this).data('boardid');
-            showDetail(boardid);
-        });
+		// 글 목록 업데이트 함수 호출 (페이지 로드 시)
+		updateBoardList();
 
-        function updateBoardList() {
-            $.get(apiURL, function (data) {
-                boardTableBody.empty(); // 목록 초기화
+		// 글 작성 폼 처리
+		$('#createButton').on('click', function () {
+			$.ajax({
+				url: apiURL,
+				method: 'POST',
+				contentType: 'application/json', // Content-Type을 JSON으로 설정
+				data: JSON.stringify({
+					title: $('#title').val(),
+					content: $('#content').val()
+				}),
+				success: function (response) {
+					// 글 작성 성공 시 모달 닫기
+					createModal.modal('hide');
+					// 목록 업데이트
+					updateBoardList();
+				}
+			});
+		});
 
-                data.forEach(function (item) {
-                    boardTableBody.append(`
-                        <tr>
-                            <td>${item.boardid}</td>
-                            <td><a href="#" class="show-details" data-boardid="${item.boardid}">${item.title}</a></td>
-                            <td>${item.nickname}</td>
-                            <td>${item.createdAt}</td>
-                        </tr>
-                    `);
-                });
-            });
-        }
 
-        updateBoardList(); // 페이지 로드 시 목록 업데이트
-    });
+		function showDetail(boardid) {
+			$.get(apiURL + '/' + boardid, function (data) {
+				var modalBody = detailModal.find('.modal-body');
+				modalBody.empty();
+
+
+
+				// 수정할 수 없는 input과 textarea를 추가
+				var titleInput = $('<input>', {
+					type: 'text',
+					id: 'updatedTitle',
+					value: data.title,
+					disabled: 'true', // 수정 불가능하게 설정
+				});
+				var contentInput = $('<textarea>', {
+					id: 'updatedContent',
+					text: data.content,
+					disabled: 'true', // 수정 불가능하게 설정
+				});
+
+				modalBody.append('<p><strong>제목:</strong></p>');
+				modalBody.append(titleInput);
+				modalBody.append('<p><strong>내용:</strong></p>');
+				modalBody.append(contentInput);
+
+				var editButton = $('#editButton');
+				let saveButton = $('#saveButton');
+				let deleteButton = $('#deleteButton');
+
+				if (data.nickname === loggedInUserNickname) {
+					// 글 작성자와 로그인한 사용자가 일치하면 수정 버튼 활성화
+					editButton.prop('disabled', false);
+					editButton.show(); // 수정 버튼 표시
+					saveButton.hide();
+					deleteButton.show();
+
+				} else {
+					// 수정할 권한이 없는 경우 수정 버튼 숨김
+					editButton.prop('disabled', true);
+					editButton.hide(); // 수정 버튼 숨김
+					saveButton.hide();
+					deleteButton.hide();
+				}
+
+				editButton.on('click', function () {
+					titleInput.prop('disabled', false);
+					contentInput.prop('disabled', false);
+					editButton.hide();
+					saveButton.show();
+					deleteButton.hide();
+				});
+
+
+				// 게시글 수정하기 
+				saveButton.on('click', function () {
+					// titleInput 및 contentInput의 값을 가져오기
+					var updatedTitle = titleInput.val();
+					var updatedContent = contentInput.val();
+
+					// JSON 데이터 생성
+					var updatedData = {
+						title: updatedTitle,
+						content: updatedContent
+					};
+
+					// 서버로 데이터 전송
+					$.ajax({
+						type: 'PATCH',
+						url: apiURL + '/' + boardid,
+						contentType: 'application/json',
+						data: JSON.stringify(updatedData),
+						success: function (response) {
+							// 성공 시 실행할 코드 (예: 모달 닫기, 목록 업데이트)
+							detailModal.modal('hide');
+							updateBoardList();
+						},
+						error: function (xhr, status, error) {
+							// 오류 처리
+							console.error(error);
+						}
+					});
+				});
+
+				deleteButton.on('click', function () {
+					$.ajax({
+						type: 'DELETE',
+						url: apiURL + '/' + boardid,
+						success: function (response) {
+							// 성공 시 실행할 코드 (예: 모달 닫기, 목록 업데이트)
+							detailModal.modal('hide');
+							updateBoardList();
+						},
+						error: function (xhr, status, error) {
+							// 오류 처리
+							console.error(error);
+						}
+					});
+				});
+
+
+				detailModal.modal('show');
+			});
+		}
+
+
+		// Modal 열기 버튼 클릭 이벤트 핸들러
+		boardTableBody.on('click', '.show-details', function () {
+			var boardid = $(this).data('boardid');
+			showDetail(boardid);
+		});
+	});
+
 </script>

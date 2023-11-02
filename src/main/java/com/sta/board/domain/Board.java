@@ -49,10 +49,9 @@ public class Board {
     @JoinColumn(name = "id")
     private User user;
     
-    public void update(String title,String content, User user) {
+    public void update(String title,String content) {
     	this.title = title;
     	this.content = content;
-    	this.user = user;
     	this.updatedAt = LocalDateTime.now(); 
     	
     }

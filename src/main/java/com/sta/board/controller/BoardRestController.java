@@ -50,15 +50,15 @@ public class BoardRestController {
         return ResponseEntity.ok(boardId);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Long> updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto) {
-        Long updatedBoardId = boardService.update(id, boardRequestDto);
+    @PatchMapping("/{boardid}")
+    public ResponseEntity<Long> updateBoard(@PathVariable Long boardid, @RequestBody BoardRequestDto boardRequestDto) {
+        Long updatedBoardId = boardService.update(boardid, boardRequestDto);
         return ResponseEntity.ok(updatedBoardId);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
-        boardService.delete(id);
+    @DeleteMapping("/{boardid}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardid) {
+        boardService.delete(boardid);
         return ResponseEntity.noContent().build();
     }
 }
