@@ -62,7 +62,7 @@ public class SecurityLoginController {
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) throws IOException {
         model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "Security 로그인");
-
+        System.out.println("회원가입 진입");
         // loginId 중복 체크
         if(userService.checkLoginIdDuplicate(joinRequest.getUserid())) {
             bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됩니다."));
@@ -80,7 +80,8 @@ public class SecurityLoginController {
             return "join";
         }
         
-        imageService.finalImage(joinRequest.getImg());
+        String img= imageService.finalImage(joinRequest.getImg());
+        joinRequest.setImg(img);
         userService.join(joinRequest);
         return "redirect:/security-login";
     }

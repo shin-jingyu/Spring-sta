@@ -2,7 +2,7 @@ package com.sta.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -32,7 +32,7 @@ public class WebSecurityConfig {
 		  http
 	          .authorizeHttpRequests(authorizeRequests ->
 	                  authorizeRequests
-	                          .requestMatchers("/security-login/login", "/security-login/", "/security-login/join").permitAll()
+	                          .requestMatchers("/security-login/**", "/api/images/upload","/uploads/**").permitAll()
 	                          .requestMatchers("/security-login/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
 	                          .anyRequest().authenticated()
 	          )
