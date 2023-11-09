@@ -24,10 +24,9 @@ public class UserImageController {
 	
 	@PostMapping("/upload")
 	public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
-	    System.out.println("업로드 컨트롤러 진입");
+	   
 	    try {
 	        String uniqueFileName = imageService.tempImage(file);
-	        System.out.println("임시 파일 이름: " + uniqueFileName);
 	        return ResponseEntity.ok(uniqueFileName);
 	    } catch (IOException e) {
 	        e.printStackTrace();

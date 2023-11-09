@@ -21,6 +21,9 @@
 			<span th:text="${nickname}">
 				사용자 닉네임
 			</span>
+			<img th:src="${img}" alt="내 이미지" width="200" height="150">
+			<button>회원정보 수정</button>
+			<button onclick="location.href='/security-login/logout'">로그아웃</button>
 		</div>
 	</header>
 </body>

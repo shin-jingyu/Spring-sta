@@ -32,8 +32,11 @@ public class Board {
     private Long boardid;
 
     @Column(nullable = false)
-    private String title;
-
+    private String boardimg1;
+    private String boardimg2;
+    private String boardimg3;
+    private String boardimg4;
+    private String boardimg5;
     @Column(nullable = false)
     private String content;
     
@@ -49,8 +52,12 @@ public class Board {
     @JoinColumn(name = "id")
     private User user;
     
-    public void update(String title,String content) {
-    	this.title = title;
+    public void update(String boardimg1,String boardimg2,String boardimg3,String boardimg4,String boardimg5,String content) {
+    	this.boardimg1 = boardimg1;
+    	this.boardimg2 = boardimg2;
+    	this.boardimg3 = boardimg3;
+    	this.boardimg4 = boardimg4;
+    	this.boardimg5 = boardimg5;
     	this.content = content;
     	this.updatedAt = LocalDateTime.now(); 
     	

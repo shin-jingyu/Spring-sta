@@ -3,11 +3,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="|${pageName}|"></title>
+   
 </head>
 <body>
 <div>
-    <h1><a th:href="|/${loginType}|">[[${pageName}]]</a></h1> <hr/>
+   
         <h2>로그인</h2>
         <form th:method="post" th:action="|@{/{loginType}/login (loginType=${loginType})}|" th:object="${loginRequest}">
             <div>

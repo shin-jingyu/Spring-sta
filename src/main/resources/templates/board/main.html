@@ -2,87 +2,113 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	
+
 	<link th:replace="header.html" />
 
 </head>
 
 <body>
-	
 
-		<div class="sidebar">
-			<div class="container">
-				<p>home</p>
+
+	<div class="sidebar">
+		<div class="container">
+			<p>home</p>
+		</div>
+	</div>
+
+
+	<div class="content">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th class="col-md-1">번호</th>
+					<th class="col-md-1">제목</th>
+					<th class="col-md-1">작성자</th>
+					<th class="col-md-1">작성일</th>
+				</tr>
+			</thead>
+			<tbody id="boardTableBody">
+
+			</tbody>
+		</table>
+
+		<!-- 글작성 모달 -->
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal"
+			data-bs-whatever="@mdo">글작성</button>
+
+		<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="ModalLabel">글작성</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="content" class="col-form-label">사진:</label>
+							<input id="boardfile" type="file" multiple>
+							<div id="carouselExampleIndicators" class="carousel slide">
+								<div class="carousel-inner">
+									<div id="imgdiv" class="carousel-item active" hidden>
+										<img id="imagePreview1" class="d-block w-100" style="height: 300px;" src="">
+										<input type="hidden" id="boardimg1" name="boardimg1" value="">
+									</div>
+
+								</div>
+
+
+								<button class="carousel-control-prev" type="button"
+									data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+									<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+									<span class="visually-hidden">Previous</span>
+								</button>
+								<button class="carousel-control-next" type="button"
+									data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+									<span class="carousel-control-next-icon" ariahidden="true"></span>
+									<span class="visually-hidden">Next</span>
+								</button>
+							</div>
+
+						</div>
+
+						<div class="mb-3">
+							<label for="content" class="col-form-label">내용:</label>
+							<textarea class="form-control" id="content" required></textarea>
+						</div>
+
+					</div>
+
+
+					<div class="modal-footer">
+						<button type="button" id="createButton" class="btn btn-primary">업로드</button>
+					</div>
+				</div>
 			</div>
 		</div>
 
 
-		<div class="content">
-			<table class="table table-bordered">
-				<thead>
-					<tr>
-						<th class="col-md-1">번호</th>
-						<th class="col-md-1">제목</th>
-						<th class="col-md-1">작성자</th>
-						<th class="col-md-1">작성일</th>
-					</tr>
-				</thead>
-				<tbody id="boardTableBody">
-				</tbody>
-			</table>
-
-			<!-- 글작성 모달 -->
-			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal"
-				data-bs-whatever="@mdo">글작성</button>
-
-			<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="ModalLabel">글작성</h1>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<div class="mb-3">
-								<label for="title" class="col-form-label">제목:</label>
-								<input type="text" class="form-control" id="title" required>
-							</div>
-							<div class="mb-3">
-								<label for="content" class="col-form-label">내용:</label>
-								<textarea class="form-control" id="content" required></textarea>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" id="createButton" class="btn btn-primary">업로드</button>
-						</div>
+		<!-- 상세보기 모달------------------- -->
+		<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="detailModalLabel">글 상세보기</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<!-- 상세 내용을 여기에 채웁니다. -->
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="editButton" class="btn btn-primary">수정</button>
+						<button type="button" id="saveButton" class="btn btn-primary">저장</button>
+						<button type="button" id="deleteButton" class="btn btn-primary">삭제</button>
 					</div>
 				</div>
 			</div>
-
-
-			<!-- 상세보기 모달------------------- -->
-			<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel"
-				aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="detailModalLabel">글 상세보기</h1>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<!-- 상세 내용을 여기에 채웁니다. -->
-						</div>
-						<div class="modal-footer">
-							<button type="button" id="editButton" class="btn btn-primary">수정</button>
-							<button type="button" id="saveButton" class="btn btn-primary">저장</button>
-							<button type="button" id="deleteButton" class="btn btn-primary">삭제</button>
-						</div>
-					</div>
-				</div>
-			</div>
-
 		</div>
-	
+
+	</div>
 
 
 </body>
@@ -96,6 +122,9 @@
 		var createModal = $('#Modal'); // 글 작성 모달
 		var detailModal = $('#detailModal'); // 상세보기 모달
 		var loggedInUserNickname = /*[[${nickname}]]*/'';
+		const imageInput = $('#boardfile');
+
+
 
 		// 페이지가 로드될 때 게시글 목록을 업데이트
 		function updateBoardList() {
@@ -121,23 +150,93 @@
 
 		// 글 작성 폼 처리
 		$('#createButton').on('click', function () {
+			let boardsimg = $('#boardimg1');
+			if (boardsimg.val() === '') {
+				alert("이미지를 업로드 해주세요")
+				return;
+			}
+
+			var boardImages = [];
+			for (let i = 1; i <= imageInput[0].files.length; i++) {
+				const imagePath = $('#boardimg' + i).val();
+				if (imagePath !== null && imagePath !== '') {
+					boardImages.push(imagePath);
+				} else {
+					// 이미지가 없으면 루프 종료
+					break;
+				}
+			}
+
+
+			console.log(boardImages);
+
 			$.ajax({
 				url: apiURL,
 				method: 'POST',
-				contentType: 'application/json', // Content-Type을 JSON으로 설정
+				contentType: 'application/json',
 				data: JSON.stringify({
-					title: $('#title').val(),
+					boardimgs: boardImages,
 					content: $('#content').val()
-				}),
-				success: function (response) {
-					// 글 작성 성공 시 모달 닫기
+				})
+			})
+				.done(function (response) {
 					createModal.modal('hide');
-					// 목록 업데이트
 					updateBoardList();
-				}
-			});
+				})
+				.fail(function (jqXHR, textStatus, errorThrown) {
+					console.log(jqXHR.responseText);
+					console.log(textStatus);
+					console.log(errorThrown);
+				});
+
 		});
 
+		imageInput.on("change", function () {
+			var formData = new FormData();
+			const carouselInner = $('.carousel-inner');
+			let a = 0;
+			for (let i = 0; i < imageInput[0].files.length; i++) {
+				let file = imageInput[0].files[i];
+				formData.append('files', file);
+				a = i + 1;
+				if (i >= 1) {
+					carouselInner.append(
+						`<div class="carousel-item">` +
+						`<img id="imagePreview${a}" class="d-block w-100" style="height: 300px;" src="">` +
+						`<input type="hidden" id="boardimg${a}" name="boardimg${a}" value="">` +
+						`</div>`
+					);
+
+				} else if (i == 0) {
+					let imgdiv = document.getElementById('imgdiv');
+					imgdiv.removeAttribute("hidden");
+				}
+
+				let imagePreviewtem = document.getElementById('imagePreview' + a);
+				imagePreviewtem.src = URL.createObjectURL(file);
+
+
+			}
+
+			// 서버로 이미지 업로드
+			$.ajax({
+				url: apiURL + '/boardimg',
+				method: 'POST',
+				processData: false,
+				contentType: false,
+				data: formData,
+				success: function (uniqueFileNames) {
+					for (let i = 0; i < uniqueFileNames.length; i++) {
+						let boardsimg = $('#boardimg' + (i + 1));
+						boardsimg.val(uniqueFileNames[i]);
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error(error);
+				}
+			});
+
+		});
 
 		function showDetail(boardid) {
 			$.get(apiURL + '/' + boardid, function (data) {

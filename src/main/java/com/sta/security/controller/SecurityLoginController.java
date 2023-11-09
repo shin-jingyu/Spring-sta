@@ -30,24 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityLoginController {
 	
 	private final UserService userService;
-	private final BoardService boardService;
 	private final UserImageService imageService;
-	
-	@GetMapping(value = {"", "/"})
-    public String home(Model model, Authentication auth) {
-        List<BoardResponseDTO> dto = boardService.findAll();
-		model.addAttribute("loginType", "security-login");
-        model.addAttribute("pageName", "Security 로그인");
-        model.addAttribute("boardList",dto);
-        if(auth != null) {
-            User loginUser = userService.getLoginUserByLoginId(auth.getName());
-            if (loginUser != null) {
-                model.addAttribute("nickname", loginUser.getNickname());
-            }
-        }
-
-        return "home";
-    }
 
     @GetMapping("/join")
     public String joinPage(Model model) {
@@ -62,7 +45,7 @@ public class SecurityLoginController {
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) throws IOException {
         model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "Security 로그인");
-        System.out.println("회원가입 진입");
+       
         // loginId 중복 체크
         if(userService.checkLoginIdDuplicate(joinRequest.getUserid())) {
             bindingResult.addError(new FieldError("joinRequest", "loginId", "로그인 아이디가 중복됩니다."));
@@ -90,7 +73,6 @@ public class SecurityLoginController {
     public String loginPage(Model model) {
         model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "Security 로그인");
-
         model.addAttribute("loginRequest", new LoginRequest());
         return "login";
     }

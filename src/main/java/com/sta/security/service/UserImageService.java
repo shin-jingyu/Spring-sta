@@ -25,7 +25,7 @@ public class UserImageService {
 
 		Files.move(sourcePath, targetPath); // 파일 이동
 
-		return finalUploadDir+"/"+uniqueFileName; // 이동된 파일의 경로 반환
+		return "/uploads/final/"+uniqueFileName; // 이동된 파일의 경로 반환
 	}
 
 	public String tempImage(MultipartFile file) throws IOException {

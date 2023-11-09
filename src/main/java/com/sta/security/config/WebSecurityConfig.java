@@ -24,7 +24,7 @@ public class WebSecurityConfig {
 	  @Bean
 	  public WebSecurityCustomizer configure() {
 	      return (web) -> web.ignoring()
-	              .requestMatchers("/static/**","/static/uploads/**");
+	              .requestMatchers("/static/**","/static/uploads/**","/static/board/**");
 	  }
 	  
 	  @Bean
@@ -41,7 +41,7 @@ public class WebSecurityConfig {
 	                          .usernameParameter("userid")
 	                          .passwordParameter("password")
 	                          .loginPage("/security-login/login")
-	                          .defaultSuccessUrl("/security-login")
+	                          .defaultSuccessUrl("/board")
 	                          .failureUrl("/security-login/login")
 	                          .permitAll()
 	          )
