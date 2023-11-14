@@ -1,4 +1,5 @@
 package com.sta.board.controller;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -24,84 +25,88 @@ import com.sta.board.domain.BoardResponseDTO;
 
 import com.sta.board.service.BoardService;
 
-
 import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/board")
 public class BoardRestController {
 
-    private final BoardService boardService;
+	private final BoardService boardService;
 
-    @GetMapping
-    public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
-        List<BoardResponseDTO> boards = boardService.findAll();
-        return ResponseEntity.ok(boards);
-    }
-
-    @GetMapping("/{boardid}")
-    public ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable Long boardid) {
-        BoardResponseDTO board = boardService.boardDetail(boardid);
-        if (board != null) {
-            return ResponseEntity.ok(board);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    @PostMapping("/boardimg")
-    public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
-        try {
-            List<String> uniqueFileNames = boardService.tempImages(files);
-            return ResponseEntity.ok(uniqueFileNames);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
-        }
-    }
-  
-    @PostMapping
-    public ResponseEntity<Long> createBoard(@RequestBody BoardRequestDto boardRequestDto, Authentication authentication) throws IOException {
-        System.out.println(boardRequestDto.getBoardimgs());
-    	UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-     
-        List<String>imgname= boardService.finalImages(boardRequestDto.getBoardimgs());
-        
-        for (int i = 0; i < imgname.size(); i++) {
-            String img = imgname.get(i);
-            switch (i) {
-                case 0:
-                    boardRequestDto.setBoardimg1(img);
-                    break;
-                case 1:
-                    boardRequestDto.setBoardimg2(img);
-                    break;
-                case 2:
-                    boardRequestDto.setBoardimg3(img);
-                    break;
-                case 3:
-                    boardRequestDto.setBoardimg4(img);
-                    break;
-                case 4:
-                    boardRequestDto.setBoardimg5(img);
-                    break;
-               
-            }
-        }
-			
+	@GetMapping
+	public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
 		
-        Long boardId = boardService.save(boardRequestDto, userDetails.getUsername());
-        return ResponseEntity.ok(boardId);
-    }
+			List<BoardResponseDTO> boards = boardService.findAll();
+			
+			return ResponseEntity.ok(boards);
+		
+	}
 
-    @PatchMapping("/{boardid}")
-    public ResponseEntity<Long> updateBoard(@PathVariable Long boardid, @RequestBody BoardRequestDto boardRequestDto) {
-        Long updatedBoardId = boardService.update(boardid, boardRequestDto);
-        return ResponseEntity.ok(updatedBoardId);
-    }
+	@GetMapping("/{boardid}")
+	public ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable Long boardid) {
+		BoardResponseDTO board = boardService.boardDetail(boardid);
+		if (board != null) {
+			return ResponseEntity.ok(board);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 
-    @DeleteMapping("/{boardid}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardid) {
-        boardService.delete(boardid);
-        return ResponseEntity.noContent().build();
-    }
+	@PostMapping("/boardimg")
+	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
+		try {
+			List<String> uniqueFileNames = boardService.tempImages(files);
+			return ResponseEntity.ok(uniqueFileNames);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+		}
+	}
+
+	@PostMapping
+	public ResponseEntity<Long> createBoard(@RequestBody BoardRequestDto boardRequestDto, Authentication authentication)
+			throws IOException {
+		System.out.println(boardRequestDto.getBoardimgs());
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+		List<String> imgname = boardService.finalImages(boardRequestDto.getBoardimgs());
+
+		for (int i = 0; i < imgname.size(); i++) {
+			String img = imgname.get(i);
+			switch (i) {
+			case 0:
+				boardRequestDto.setBoardimg1(img);
+				break;
+			case 1:
+				boardRequestDto.setBoardimg2(img);
+				break;
+			case 2:
+				boardRequestDto.setBoardimg3(img);
+				break;
+			case 3:
+				boardRequestDto.setBoardimg4(img);
+				break;
+			case 4:
+				boardRequestDto.setBoardimg5(img);
+				break;
+
+			}
+		}
+
+		Long boardId = boardService.save(boardRequestDto, userDetails.getUsername());
+		return ResponseEntity.ok(boardId);
+	}
+
+	@PatchMapping("/{boardid}")
+	public ResponseEntity<Long> updateBoard(@PathVariable Long boardid, @RequestBody BoardRequestDto boardRequestDto) {
+		Long updatedBoardId = boardService.update(boardid, boardRequestDto);
+		return ResponseEntity.ok(updatedBoardId);
+	}
+
+	@DeleteMapping("/{boardid}")
+	public ResponseEntity<Void> deleteBoard(@PathVariable Long boardid) {
+		boardService.delete(boardid);
+		return ResponseEntity.noContent().build();
+	}
 }

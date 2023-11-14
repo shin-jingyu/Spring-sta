@@ -56,7 +56,7 @@ public class WebSecurityConfig {
 	          .oauth2Login(oauth2Login -> {
 	              oauth2Login
 	                      .loginPage("/security-login/login")
-	                      .defaultSuccessUrl("/security-login")
+	                      .defaultSuccessUrl("/board")
 	                      .userInfoEndpoint()
 	                      .userService(principalOauth2UserService);
 	          });

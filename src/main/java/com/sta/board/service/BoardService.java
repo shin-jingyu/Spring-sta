@@ -56,7 +56,7 @@ public class BoardService {
 
             Files.move(sourcePath, targetPath); // 파일 이동
 
-            finalFileUrls.add("/board/main/" + uniqueFileName); // 이동된 파일의 경로 추가
+            finalFileUrls.add("/uploads/board/main/" + uniqueFileName); // 이동된 파일의 경로 추가
             
         }
 
