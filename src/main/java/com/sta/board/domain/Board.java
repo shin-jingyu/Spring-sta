@@ -52,12 +52,8 @@ public class Board {
     @JoinColumn(name = "id")
     private User user;
     
-    public void update(String boardimg1,String boardimg2,String boardimg3,String boardimg4,String boardimg5,String content) {
-    	this.boardimg1 = boardimg1;
-    	this.boardimg2 = boardimg2;
-    	this.boardimg3 = boardimg3;
-    	this.boardimg4 = boardimg4;
-    	this.boardimg5 = boardimg5;
+    public void update(String content) {
+    
     	this.content = content;
     	this.updatedAt = LocalDateTime.now(); 
     	

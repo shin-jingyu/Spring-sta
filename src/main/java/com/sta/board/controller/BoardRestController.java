@@ -67,7 +67,7 @@ public class BoardRestController {
 	@PostMapping
 	public ResponseEntity<Long> createBoard(@RequestBody BoardRequestDto boardRequestDto, Authentication authentication)
 			throws IOException {
-		System.out.println(boardRequestDto.getBoardimgs());
+		
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
 		List<String> imgname = boardService.finalImages(boardRequestDto.getBoardimgs());
@@ -98,9 +98,9 @@ public class BoardRestController {
 		return ResponseEntity.ok(boardId);
 	}
 
-	@PatchMapping("/{boardid}")
-	public ResponseEntity<Long> updateBoard(@PathVariable Long boardid, @RequestBody BoardRequestDto boardRequestDto) {
-		Long updatedBoardId = boardService.update(boardid, boardRequestDto);
+	@PatchMapping
+	public ResponseEntity<Long> updateBoard(@RequestBody BoardRequestDto boardRequestDto){
+		Long updatedBoardId = boardService.update(boardRequestDto);
 		return ResponseEntity.ok(updatedBoardId);
 	}
 

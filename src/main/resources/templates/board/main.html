@@ -82,20 +82,12 @@
 
 
 	</div>
-	<!-- ------메뉴 설정 ------- -->
 
-	<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-sm">
-			<div class="modal-content">
-				<ul class="list-group ">
-					<li class="list-group-item list-group-item-action text-center fw-semibold ">수정하기</li>
-					<li class="list-group-item list-group-item-action text-center fw-semibold ">삭제하기</li>
-					<li class="list-group-item list-group-item-action text-center fw-semibold ">취소</li>
-				</ul>
-			</div>
-		</div>
+
+
+	<div id="boardupdatemodal">
+
 	</div>
-
 
 
 </body>
@@ -109,7 +101,7 @@
 		var createModal = $('#Modal'); // 글 작성 모달
 		var loggedInUserNickname = /*[[${nickname}]]*/'';
 		const imageInput = $('#boardfile');
-
+		let boardupdatemodal = $('#boardupdatemodal');
 
 
 		// 페이지가 로드될 때 게시글 목록을 업데이트
@@ -120,51 +112,133 @@
 				// 각 게시글에 대한 정보를 목록에 추가
 				data.forEach(function (item) {
 					const defaultImage = '/uploads/final/main.jpg';
-					
+					const itemString = JSON.stringify(item);
 					const imageUrls = [item.boardimg1, item.boardimg2, item.boardimg3, item.boardimg4, item.boardimg5].filter(Boolean);
+
+					// 각 수정 버튼에 고유한 ID 할당
+					const boardUpdateBtnId = `boardupdate-${item.boardid}`;
+					const modalId = `exampleModal3-${item.boardid}`;
+
 					mainboard.append(`
-						<div class="card " >
-							<div class="card-header " style="display: flex; justify-content: space-between; align-items: center;">
-								<div style="display: flex; align-items: center;">
-								  <img src="${item.img ? item.img : defaultImage}"  style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;"  >
-								  <h5 style="margin: 0;">${item.nickname} • ${item.timeDifference}</h5>
-								
-								</div>
-								 ${loggedInUserNickname === item.nickname ? `
-					                <button type="button" style="float: right;" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal3">
-					                    •••
-					                </button>` : ''}
-							</div>
-							<div id="cardbody" class="card-body" >
-								<div id="board-img-${item.boardid}" class="carousel slide">
-									 <div class="carousel-inner">
+		                <div class="card" id="card">
+		                    <div class="card-header " style="display: flex; justify-content: space-between; align-items: center;">
+		                        <div style="display: flex; align-items: center;">
+		                            <img src="${item.img ? item.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+		                            <h5 style="margin: 0;">${item.nickname} • ${item.timeDifference}</h5>
+		                        </div>
+		                        ${loggedInUserNickname === item.nickname ? `
+		                            <button type="button" style="float: right;" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#${modalId}">
+		                                •••
+		                            </button>` : ''}
+		                        <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		                            <div class="modal-dialog modal-dialog-centered ">
+		                                <div class="modal-content">
+		                                    <ul class="list-group ">
+		                                        <!-- 각 수정 버튼에 고유한 ID 할당 -->
+		                                       <li id="${boardUpdateBtnId}" data-bs-toggle="modal" data-bs-target="#update-${item.boardid}" data-bs-info='${itemString}'class="list-group-item list-group-item-action text-center fw-semibold ">수정하기</li>
+		
+		                                        <li id="boarddelete"  class="list-group-item list-group-item-action text-center fw-semibold ">삭제하기
+		                                        </li>
+		                                        <li data-bs-dismiss="modal" class="list-group-item list-group-item-action text-center fw-semibold ">
+		                                            취소</li>
+		                                    </ul>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    <div class="modal fade" id="update-${item.boardid}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				            	<div class="modal-dialog modal-dialog-centered ">
+									
+		      							<div class="modal-content">
+											  
+											<div class="modal-header">
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											
+											<div class="modal-body">
+												 
+												<div id="board-imgs-${item.boardid}" class="carousel slide">
+													<div class="carousel-inner">
+														${imageUrls.map((imageUrl, index) => `
+						                                    <div id="img-${index}" class="carousel-item ${index === 0 ? 'active' : ''}">
+																
+						                                        <img src="${imageUrl}"  class="d-block w-100" style="height: 400px;"  alt="Image ${index + 1}">
+						                                    </div>
+						                                    
+						                                `).join('')}
+						                            </div>
+						                            <button class="carousel-control-prev" type="button" data-bs-target="#board-imgs-${item.boardid}" data-bs-slide="prev">
+						                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						                            </button>
+						                            <button class="carousel-control-next" type="button" data-bs-target="#board-imgs-${item.boardid}" data-bs-slide="next">
+						                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+						                            </button>
+						                        </div>
+						                        <br/>
+						                        <textarea class="form-control" id="contentupdate-${item.boardid}" required>${item.content}</textarea>
+											</div>
+				                        	<div class="modal-footer">
+												<button type="button" id="updates-${item.boardid}" class="btn btn-primary">수정하기</button>
+											</div>
+				                        </div>
+				                    </div>
+				                </div>
+		                    </div>
+		                    <div id="cardbody" class="card-body" >
+		                        <div id="board-img-${item.boardid}" class="carousel slide">
+		                            <div class="carousel-inner">
 		                                ${imageUrls.map((imageUrl, index) => `
 		                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
 		                                        <img src="${imageUrl}" class="d-block w-100" style="height: 400px;"  alt="Image ${index + 1}">
 		                                    </div>
 		                                `).join('')}
 		                            </div>
-									<button class="carousel-control-prev" type="button" data-bs-target="#board-img-${item.boardid}" data-bs-slide="prev">
-										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-										<span class="visually-hidden">Previous</span>
-									</button>
-									<button class="carousel-control-next" type="button" data-bs-target="#board-img-${item.boardid}" data-bs-slide="next">
-										<span class="carousel-control-next-icon" aria-hidden="true"></span>
-										<span class="visually-hidden">Next</span>
-									</button>
-								</div>
+		                            <button class="carousel-control-prev" type="button" data-bs-target="#board-img-${item.boardid}" data-bs-slide="prev">
+		                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		                            </button>
+		                            <button class="carousel-control-next" type="button" data-bs-target="#board-img-${item.boardid}" data-bs-slide="next">
+		                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+		                            </button>
+		                        </div>
+		                    </div>
+		                    <div class="card-footer text-body-secondary">
+		                    ${item.content}
+		                    </div>
+		                </div>
+		                <br/>
+		            `);
 
 
-							</div>
-							<div class="card-footer text-body-secondary">
-								댓글
-							</div>
-						</div>
-						<br/>
-					`);
+
+
+					$(`#updates-${item.boardid}`).on('click', function () {
+						let boardcontent = $(`#contentupdate-${item.boardid}`).val();
+						let boardids=
+						fetch(apiURL, {
+							method: 'PATCH',
+							headers: {
+								'Content-Type': 'application/json',
+								// 여기에 필요한 다른 헤더들을 추가할 수 있습니다.
+							},
+							body: JSON.stringify({
+								content: boardcontent,
+								boardid: item.boardid
+							}), // yourData에는 PATCH 요청으로 보낼 데이터가 들어갑니다.
+							
+						})
+						
+							.then(() => {
+								console.log('PATCH request successful');
+								 $(`#update-${item.boardid}`).modal('hide');
+									updateBoardList();
+							})
+							.catch(error => console.error('Error during PATCH request:', error));
+
+					});
+
 				});
 			});
 		}
+
 
 		// 글 목록 업데이트 함수 호출 (페이지 로드 시)
 		updateBoardList();
@@ -206,6 +280,9 @@
 
 
 		});
+
+
+
 
 		imageInput.on("change", function () {
 			var formData = new FormData();
