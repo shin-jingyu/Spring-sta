@@ -43,15 +43,6 @@ public class BoardRestController {
 		
 	}
 
-	@GetMapping("/{boardid}")
-	public ResponseEntity<BoardResponseDTO> getBoardById(@PathVariable Long boardid) {
-		BoardResponseDTO board = boardService.boardDetail(boardid);
-		if (board != null) {
-			return ResponseEntity.ok(board);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
 
 	@PostMapping("/boardimg")
 	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
@@ -104,9 +95,10 @@ public class BoardRestController {
 		return ResponseEntity.ok(updatedBoardId);
 	}
 
-	@DeleteMapping("/{boardid}")
-	public ResponseEntity<Void> deleteBoard(@PathVariable Long boardid) {
-		boardService.delete(boardid);
+	@DeleteMapping
+	public ResponseEntity<Void> deleteBoard(@RequestBody BoardRequestDto boardRequestDto) throws IOException {
+		boardService.deleteAllImages(boardRequestDto.getBoardimgs());
+		boardService.delete(boardRequestDto.getBoardid());
 		return ResponseEntity.noContent().build();
 	}
 }

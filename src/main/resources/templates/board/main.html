@@ -137,7 +137,7 @@
 		                                        <!-- 각 수정 버튼에 고유한 ID 할당 -->
 		                                       <li id="${boardUpdateBtnId}" data-bs-toggle="modal" data-bs-target="#update-${item.boardid}" data-bs-info='${itemString}'class="list-group-item list-group-item-action text-center fw-semibold ">수정하기</li>
 		
-		                                        <li id="boarddelete"  class="list-group-item list-group-item-action text-center fw-semibold ">삭제하기
+		                                        <li id="delete-${boardUpdateBtnId}"  class="list-group-item list-group-item-action text-center fw-semibold ">삭제하기
 		                                        </li>
 		                                        <li data-bs-dismiss="modal" class="list-group-item list-group-item-action text-center fw-semibold ">
 		                                            취소</li>
@@ -212,28 +212,53 @@
 
 					$(`#updates-${item.boardid}`).on('click', function () {
 						let boardcontent = $(`#contentupdate-${item.boardid}`).val();
-						let boardids=
-						fetch(apiURL, {
-							method: 'PATCH',
-							headers: {
-								'Content-Type': 'application/json',
-								// 여기에 필요한 다른 헤더들을 추가할 수 있습니다.
-							},
-							body: JSON.stringify({
-								content: boardcontent,
-								boardid: item.boardid
-							}), // yourData에는 PATCH 요청으로 보낼 데이터가 들어갑니다.
-							
-						})
-						
-							.then(() => {
-								console.log('PATCH request successful');
-								 $(`#update-${item.boardid}`).modal('hide');
-									updateBoardList();
+						if (boardcontent == '' || null) {
+							alert("내용을 입력해주세요")
+						} else {
+							fetch(apiURL, {
+								method: 'PATCH',
+								headers: {
+									'Content-Type': 'application/json',
+									// 여기에 필요한 다른 헤더들을 추가할 수 있습니다.
+								},
+								body: JSON.stringify({
+									content: boardcontent,
+									boardid: item.boardid
+								}), // yourData에는 PATCH 요청으로 보낼 데이터가 들어갑니다.
+
 							})
-							.catch(error => console.error('Error during PATCH request:', error));
+
+								.then(() => {
+
+									$(`#update-${item.boardid}`).modal('hide');
+									updateBoardList();
+								})
+								.catch(error => console.error('Error during PATCH request:', error));
+						}
+
 
 					});
+					$(`#delete-${boardUpdateBtnId}`).on('click', function () {
+						if (confirm("삭제하시겠습니까?")) {
+							fetch(apiURL, {
+								method: 'DELETE',
+								body: JSON.stringify({
+									boardimgs: imageUrls,
+									boardid: item.boardid
+								}),
+								headers: {
+									'Content-Type': 'application/json',
+								},
+							})
+								.then(() => updateBoardList())
+								.catch(error => console.error('Error during delete request:', error))
+								.finally(() => $(`#${modalId}`).modal('hide'));
+						} else {
+							 $(`#${modalId}`).modal('hide');
+						}
+
+					});
+
 
 				});
 			});

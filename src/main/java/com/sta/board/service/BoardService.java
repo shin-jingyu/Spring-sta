@@ -70,17 +70,20 @@ public class BoardService {
 	}
 
 	public void deleteAllImages(List<String> boardImg) throws IOException {
-		
+		String basePath = "/uploads/board/main/";
+
 		for (String deleteImgs : boardImg) {
-			Path targetPath = Paths.get(deleteImgs);
-			// 파일 삭제
-	        try {
-	            Files.deleteIfExists(targetPath);
-	        } catch (IOException e) {
-	            // 파일 삭제에 실패한 경우
-	            e.printStackTrace();
-	            throw new RuntimeException("파일 삭제 실패");
-	        }
+			String relativePath = deleteImgs.replaceFirst("^" + basePath, "");
+			Path targetPath = Paths.get(mainUploadDirs, relativePath);
+
+			try {
+				Files.deleteIfExists(targetPath);
+				System.out.println("deleteIfExists :"+targetPath);
+			} catch (IOException e) {
+				// 파일 삭제에 실패한 경우
+				e.printStackTrace();
+				throw new RuntimeException("파일 삭제 실패");
+			}
 		}
 	};
 
@@ -115,12 +118,6 @@ public class BoardService {
 		}
 
 		return uniqueFileNames;
-	}
-
-	public BoardResponseDTO boardDetail(Long boardid) {
-		Board board = boardRepository.findById(boardid)
-				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 입니다."));
-		return new BoardResponseDTO(board);
 	}
 
 	@Transactional
