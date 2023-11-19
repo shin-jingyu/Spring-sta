@@ -42,7 +42,13 @@ public class BoardRestController {
 			return ResponseEntity.ok(boards);
 		
 	}
-
+	
+	@PostMapping("/ripple")
+	public ResponseEntity<Long> reppleCreate(){
+	
+		return null;
+		
+	}
 
 	@PostMapping("/boardimg")
 	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {

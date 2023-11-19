@@ -5,10 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sta.board.domain.Board;
 import com.sta.board.domain.BoardRequestDto;
 import com.sta.board.domain.BoardResponseDTO;
+import com.sta.board.domain.Ripple;
+import com.sta.board.domain.RippleRequestDTO;
+import com.sta.board.domain.RippleResponseDTO;
 import com.sta.board.repository.BoardRepository;
+import com.sta.board.repository.RippleRepository;
 import com.sta.security.domain.User;
 import com.sta.security.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,6 +37,7 @@ public class BoardService {
 
 	private final UserRepository userRepository;
 	private final BoardRepository boardRepository;
+	private final RippleRepository rippleRepository;
 	private final String mainUploadDirs = "C:/Spring/sta/src/main/resources/static/uploads/board/main";
 	private final String tempUploadDirs = "C:/Spring/sta/src/main/resources/static/uploads/board/temp";
 
@@ -37,6 +45,31 @@ public class BoardService {
 		Sort sort = Sort.by(Sort.Order.desc("boardid"), Sort.Order.desc("createdAt"));
 		List<Board> list = boardRepository.findAll(sort);
 		return list.stream().map(BoardResponseDTO::new).collect(Collectors.toList());
+	}
+
+	@Transactional
+	public Long reppleSave(RippleRequestDTO rippleRequestDTO) {
+		Board board = boardRepository.findByBoardid(rippleRequestDTO.getBoardid())
+				.orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
+		User user = userRepository.findByUserid(rippleRequestDTO.getUserid())
+				.orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
+		rippleRequestDTO.setBoard(board);
+		rippleRequestDTO.setUser(user);
+		Ripple ripple = rippleRepository.save(rippleRequestDTO.toEntity());
+		return ripple.getRi_id();
+
+	}
+
+	public List<RippleResponseDTO> ripplefindBoardid(Long boardid) {
+		ModelMapper modelMapper = new ModelMapper();
+		List<Ripple> list = rippleRepository.findbyBoardid(boardid);
+		List<RippleResponseDTO> responseList = list.stream()
+			    .sorted(Comparator.comparing(Ripple::getRi_createdAt))  // Ripple 엔터티의 createdAt 필드를 기준으로 정렬
+			    .map(ripple -> modelMapper.map(ripple, RippleResponseDTO.class))
+			    .collect(Collectors.toList());
+
+		return responseList;
+
 	}
 
 	@Transactional
@@ -78,7 +111,7 @@ public class BoardService {
 
 			try {
 				Files.deleteIfExists(targetPath);
-				System.out.println("deleteIfExists :"+targetPath);
+
 			} catch (IOException e) {
 				// 파일 삭제에 실패한 경우
 				e.printStackTrace();
