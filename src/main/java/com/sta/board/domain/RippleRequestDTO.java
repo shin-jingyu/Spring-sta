@@ -2,11 +2,13 @@ package com.sta.board.domain;
 
 import com.sta.security.domain.User;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RippleRequestDTO {
 
 	private String ri_content;

@@ -118,6 +118,7 @@
 					// 각 수정 버튼에 고유한 ID 할당
 					const boardUpdateBtnId = `boardupdate-${item.boardid}`;
 					const modalId = `exampleModal3-${item.boardid}`;
+					const rippleid = `ripple-${item.boardid}`;
 
 					mainboard.append(`
 		                <div class="card" id="card">
@@ -205,14 +206,73 @@
 							</div>	 
 		                    <div class="card-footer text-body-secondary">
 							<div class="input-group mb-3">
-							  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
-							  <button class="btn btn-outline-info" type="button" id="button-addon2">댓글</button>
+							  <input type="text" class="form-control" id="ripple-input${item.boardid}"; aria-describedby="ripple-create${item.boardid}">
+							  <button class="btn btn-outline-info" type="button" id="ripple-create${item.boardid}">댓글</button>
 							</div>
-
+							<div id="ripple-${item.boardid}">
+							
+							
+							</div>
+								
+								<a href="#" class="card-link">더보기</a>
 		                    </div>
 		                </div>
 		                <br/>
 		            `);
+
+					$.get(apiURL + `/ripple?boardid=${item.boardid}`, function (data) {
+						 console.log("Received data:", data); // 수신한 데이터를 콘솔에 출력
+						rippleid.append(`
+								<div class="card">
+								    <div class="card-body d-flex flex-row justify-content-between">
+								        <h5 class="card-title">Card title</h5>
+								        <div class="ml-auto">
+								            <div class="dropdown">
+								                <button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+								                    •••
+								                </button>
+								                <ul class="dropdown-menu dropdown-menu-dark">
+								                    <li><a class="dropdown-item active" href="#">수정</a></li>
+								                    <li><a class="dropdown-item" href="#">삭제</a></li>
+								                </ul>
+								            </div>
+								        </div>
+								    </div>
+								    <p class="card-text mt-auto">${data.nickname}</p>
+								</div>
+								`);
+					});
+
+
+
+
+					$(`#ripple-create${item.boardid}`).on('click', function () {
+						const rippleinputSelector = `#ripple-input${item.boardid}`;
+						let inputval = $(rippleinputSelector).val();
+						if (inputval === '' || inputval === null) {
+							alert("내용을 입력해주세요")
+						} else {
+							fetch(apiURL + '/ripple', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json',
+								},
+								body: JSON.stringify({
+									ri_content: inputval,
+									boardid: item.boardid
+
+								}),
+
+							})
+
+								.then(() => {
+
+
+									updateBoardList();
+								})
+								.catch(error => console.error('Error during ripple request:', error));
+						}
+					});
 
 
 
@@ -222,8 +282,8 @@
 						if (boardcontent == '' || null) {
 							alert("내용을 입력해주세요")
 						} else {
-							fetch(apiURL, {
-								method: 'PATCH',
+							fetch(apiURL + '/update', {
+								method: 'POST',
 								headers: {
 									'Content-Type': 'application/json',
 									// 여기에 필요한 다른 헤더들을 추가할 수 있습니다.
@@ -247,7 +307,7 @@
 					});
 					$(`#delete-${boardUpdateBtnId}`).on('click', function () {
 						if (confirm("삭제하시겠습니까?")) {
-							fetch(apiURL, {
+							fetch(apiURL + '/delete', {
 								method: 'DELETE',
 								body: JSON.stringify({
 									boardimgs: imageUrls,
@@ -261,7 +321,7 @@
 								.catch(error => console.error('Error during delete request:', error))
 								.finally(() => $(`#${modalId}`).modal('hide'));
 						} else {
-							 $(`#${modalId}`).modal('hide');
+							$(`#${modalId}`).modal('hide');
 						}
 
 					});
@@ -307,7 +367,7 @@
 			})
 				.done(function (response) {
 					createModal.modal('hide');
-					 window.location.href = '/board';
+					window.location.href = '/board';
 				});
 
 

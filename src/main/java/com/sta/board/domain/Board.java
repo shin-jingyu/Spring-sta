@@ -52,9 +52,7 @@ public class Board {
     @JoinColumn(name = "id")
     private User user;
     
-    @ManyToOne
-    @JoinColumn(name = "ri_id")
-    private Ripple ripple;
+  
     
     public void update(String content) {
     

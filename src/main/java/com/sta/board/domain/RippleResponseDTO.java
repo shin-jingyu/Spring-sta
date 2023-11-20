@@ -9,8 +9,11 @@ import com.sta.security.domain.User;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class RippleResponseDTO {
 	private Long ri_id;
 	private String ri_content;
@@ -21,6 +24,7 @@ public class RippleResponseDTO {
 	private String img;
 	private String timeDifference;
 	
+
 	private static final int SEC = 60;
 	private static final int MIN = 60;
 	private static final int HOUR = 24;
@@ -46,13 +50,14 @@ public class RippleResponseDTO {
 	
 	
 	public String calculateTimeDifference() {
+		System.out.println(ri_createdAt);
 		ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
 	    ZonedDateTime createdDateTime = ri_createdAt.atZone(ZoneOffset.UTC);
 	    long diffInMillies = ChronoUnit.MILLIS.between(createdDateTime, currentDateTime);
 	    
 	    // 초 단위로 변환
 	    long diffInSeconds = diffInMillies / 1000;
-	    
+	    System.out.println("diffInSeconds: " + diffInSeconds);  
 	    if (diffInSeconds < SEC) {
 	        return diffInSeconds + "초 전";
 	    } else if ((diffInSeconds /= MIN) < MIN) {

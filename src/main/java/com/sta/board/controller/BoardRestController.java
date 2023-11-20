@@ -22,7 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sta.board.domain.BoardRequestDto;
 import com.sta.board.domain.BoardResponseDTO;
-
+import com.sta.board.domain.RippleRequestDTO;
+import com.sta.board.domain.RippleResponseDTO;
 import com.sta.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -36,18 +37,30 @@ public class BoardRestController {
 
 	@GetMapping
 	public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
-		
-			List<BoardResponseDTO> boards = boardService.findAll();
-			
-			return ResponseEntity.ok(boards);
-		
+
+		List<BoardResponseDTO> boards = boardService.findAll();
+
+		return ResponseEntity.ok(boards);
+
 	}
-	
-	@PostMapping("/ripple")
-	public ResponseEntity<Long> reppleCreate(){
-	
-		return null;
+
+	@GetMapping("/ripple")
+	public ResponseEntity<List<RippleResponseDTO>> getRipple(@RequestParam Long boardid) {
+		List<RippleResponseDTO> ripples = boardService.ripplefindBoardid(boardid);
 		
+		return ResponseEntity.ok(ripples);
+	}
+
+	@PostMapping("/ripple")
+	public ResponseEntity<Long> rippleCreate(@RequestBody RippleRequestDTO rippleRequestDTO, Authentication authentication) {
+		
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		System.out.println(userDetails.getUsername());
+		rippleRequestDTO.setUserid(userDetails.getUsername());
+		
+		Long rippleid = boardService.reppleSave(rippleRequestDTO);
+		return ResponseEntity.ok(rippleid);
+
 	}
 
 	@PostMapping("/boardimg")
@@ -64,7 +77,7 @@ public class BoardRestController {
 	@PostMapping
 	public ResponseEntity<Long> createBoard(@RequestBody BoardRequestDto boardRequestDto, Authentication authentication)
 			throws IOException {
-		
+
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
 		List<String> imgname = boardService.finalImages(boardRequestDto.getBoardimgs());
@@ -95,16 +108,17 @@ public class BoardRestController {
 		return ResponseEntity.ok(boardId);
 	}
 
-	@PatchMapping
-	public ResponseEntity<Long> updateBoard(@RequestBody BoardRequestDto boardRequestDto){
+	@PostMapping("/update")
+	public ResponseEntity<Long> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
 		Long updatedBoardId = boardService.update(boardRequestDto);
 		return ResponseEntity.ok(updatedBoardId);
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/delete")
 	public ResponseEntity<Void> deleteBoard(@RequestBody BoardRequestDto boardRequestDto) throws IOException {
 		boardService.deleteAllImages(boardRequestDto.getBoardimgs());
 		boardService.delete(boardRequestDto.getBoardid());
 		return ResponseEntity.noContent().build();
 	}
+
 }

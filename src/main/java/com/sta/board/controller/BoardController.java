@@ -23,6 +23,7 @@ public class BoardController {
 		if (auth != null) {
 			User loginUser = userService.getLoginUserByLoginId(auth.getName());
 			if (loginUser != null) {
+				
 				model.addAttribute("nickname", loginUser.getNickname());
 				model.addAttribute("img",loginUser.getImg());
 			}
