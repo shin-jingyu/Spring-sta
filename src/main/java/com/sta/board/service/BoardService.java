@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -60,28 +62,11 @@ public class BoardService {
 
 	}
 
-	public List<RippleResponseDTO> ripplefindBoardid(Long boardid) {
-		
-		ModelMapper modelMapper = new ModelMapper();
-		List<Ripple> list = rippleRepository.findByBoard_Boardid(boardid);
-		
-		List<RippleResponseDTO> responseList = list.stream()
-			    .sorted(Comparator.comparing(Ripple::getRi_createdAt))  // Ripple 엔터티의 createdAt 필드를 기준으로 정렬
-			    .map(ripple -> modelMapper.map(ripple, RippleResponseDTO.class))
-			    .collect(Collectors.toList());
-		
-		for (RippleResponseDTO rippleDTO : responseList) {
-		    System.out.println("Ri_id: " + rippleDTO.getRi_id());
-		    System.out.println("Ri_content: " + rippleDTO.getRi_content());
-		    // 나머지 필드들에 대해서도 출력
-		    System.out.println("Time Difference: " + rippleDTO.getTimeDifference());
-		    // 필요한 정보를 모두 출력
-		    System.out.println("--------------------");
-		}
-		return responseList;
-
+	public Page<Ripple> ripplefindBoardidPaged(Long boardid, Pageable pageable) {
+		return rippleRepository.findByBoard_Boardid(boardid, pageable);
 	}
 
+	
 	@Transactional
 	public Long save(BoardRequestDto boardRequestDto, String userid) {
 		User user = userRepository.findByUserid(userid)

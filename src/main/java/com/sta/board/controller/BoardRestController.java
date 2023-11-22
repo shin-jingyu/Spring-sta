@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sta.board.domain.BoardRequestDto;
 import com.sta.board.domain.BoardResponseDTO;
+import com.sta.board.domain.Ripple;
 import com.sta.board.domain.RippleRequestDTO;
 import com.sta.board.domain.RippleResponseDTO;
 import com.sta.board.service.BoardService;
@@ -45,10 +48,11 @@ public class BoardRestController {
 	}
 
 	@GetMapping("/ripple")
-	public ResponseEntity<List<RippleResponseDTO>> getRipple(@RequestParam Long boardid) {
-		List<RippleResponseDTO> ripples = boardService.ripplefindBoardid(boardid);
-		
-		return ResponseEntity.ok(ripples);
+	public ResponseEntity<Page<RippleResponseDTO>> getRipple(@RequestParam Long boardid, Pageable pageable) {
+	    Page<Ripple> ripples = boardService.ripplefindBoardidPaged(boardid, pageable);
+	    Page<RippleResponseDTO> responseDTOPage = ripples.map(RippleResponseDTO::new);
+	    
+	    return ResponseEntity.ok(responseDTOPage);
 	}
 
 	@PostMapping("/ripple")

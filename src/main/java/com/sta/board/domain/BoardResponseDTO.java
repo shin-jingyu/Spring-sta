@@ -1,6 +1,7 @@
 package com.sta.board.domain;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -51,8 +52,9 @@ public class BoardResponseDTO {
 	}
 
 	public String calculateTimeDifference() {
-		ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
-	    ZonedDateTime createdDateTime = createdAt.atZone(ZoneOffset.UTC);
+		 ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+		    ZonedDateTime createdDateTime = createdAt.atZone(ZoneId.of("Asia/Seoul"));
 	    long diffInMillies = ChronoUnit.MILLIS.between(createdDateTime, currentDateTime);
 	    
 	    // 초 단위로 변환
