@@ -49,24 +49,30 @@ public class BoardRestController {
 
 	@GetMapping("/ripple")
 	public ResponseEntity<Page<RippleResponseDTO>> getRipple(@RequestParam Long boardid, Pageable pageable) {
-	    Page<Ripple> ripples = boardService.ripplefindBoardidPaged(boardid, pageable);
-	    Page<RippleResponseDTO> responseDTOPage = ripples.map(RippleResponseDTO::new);
-	    
-	    return ResponseEntity.ok(responseDTOPage);
+		Page<Ripple> ripples = boardService.ripplefindBoardidPaged(boardid, pageable);
+		Page<RippleResponseDTO> responseDTOPage = ripples.map(RippleResponseDTO::new);
+
+		return ResponseEntity.ok(responseDTOPage);
 	}
 
 	@PostMapping("/ripple")
-	public ResponseEntity<Long> rippleCreate(@RequestBody RippleRequestDTO rippleRequestDTO, Authentication authentication) {
-		
+	public ResponseEntity<Long> rippleCreate(@RequestBody RippleRequestDTO rippleRequestDTO,Authentication authentication) {
+
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-		System.out.println(userDetails.getUsername());
+
 		rippleRequestDTO.setUserid(userDetails.getUsername());
-		
+
 		Long rippleid = boardService.reppleSave(rippleRequestDTO);
 		return ResponseEntity.ok(rippleid);
 
 	}
 
+	/*
+	 * @PostMapping("/rippleUpdate") public ResponseEntity<Long>
+	 * rippleupdate(@RequestBody RippleRequestDTO rippleRequestDTO,Authentication
+	 * authentication) { Long updateripple = boardService.update(boardRequestDto);
+	 * return ResponseEntity.ok(updateripple); };
+	 */
 	@PostMapping("/boardimg")
 	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
 		try {

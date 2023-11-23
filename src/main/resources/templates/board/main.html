@@ -349,53 +349,65 @@
 								});
 
 								if (dataList.totalPages > 1) {
-									
-									console.log(dataList);
+									const maxPagesToShow = 10;
+									const totalPages = dataList.totalPages;
+
+									const startPage = Math.floor((currentPage) / maxPagesToShow) * maxPagesToShow + 1;
+									const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
 									rippleid.append(`
-										<nav aria-label="Page navigation example">
-										  <ul class="pagination">
-											  
-											${currentPage === 0  ? '' : `  
-											    <li class="page-item">
-											      <a class="page-link" href="#" aria-label="Previous">
-											        <span aria-hidden="true">&laquo;</span>
-											      </a>
-											    </li>
-										    `}
-										    
-										    ${Array.from({length: dataList.totalPages}, (_, index) => `
-								                <li class="page-item">
-								                    <a class="page-link" id="page-link-${item.boardid}-${index }" data-page="${index + 1}">${index + 1}</a>
-								                </li>
-								            `).join('')}
-								            
-										  	${currentPage === dataList.totalPages ? '' : `  
-											    <li class="page-item">
-											      <a class="page-link" href="#" aria-label="Next">
-											        <span aria-hidden="true">&raquo;</span>
-											      </a>
-											    </li>
-										    `}
-										  </ul>
-										</nav>
+									  <nav aria-label="Page navigation example">
+							            <ul class="pagination">
+							                ${startPage === 1 ? '' : `<li class="page-item"><a class="page-link" aria-label="Previous" id="ripple-${item.boardid}-prev" data-page="${currentPage - maxPagesToShow}"><span aria-hidden="true">&laquo;</span></a></li>`}
+							                
+							                ${Array.from({length: endPage - startPage + 1}, (_, index) => {
+										const pageNumber = startPage + index;
+										return `<li class="page-item"><a class="page-link" id="page-link-${item.boardid}-${pageNumber}" data-page="${pageNumber}">${pageNumber}</a></li>`;
+									}).join('')}
+							                
+							                ${endPage >= totalPages ? '' : `<li class="page-item"><a class="page-link" id="ripple-${item.boardid}-next" aria-label="Next" data-page="${startPage + maxPagesToShow}"><span aria-hidden="true">&raquo;</span></a></li>`}
+							            </ul>
+							        </nav>
 									`);
 
-								};
 
 
-								Array.from({length: dataList.totalPages}, (_, index) => {
-									
+									Array.from({length: endPage - startPage + 1}, (_, index) => {
+										const pageNumber = startPage + index;
 
-									$(`#page-link-${item.boardid}-${index}`).on('click', function () {
-										console.log(index);
-										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${index}&size=10`, function (dataList) {
-											currentPage = index;
+										$(`#page-link-${item.boardid}-${pageNumber}`).on('click', function () {
+											
+											$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${pageNumber - 1}&size=10`, function (dataList) {
+												currentPage = pageNumber - 1;
+												rippleid.empty();
+												ripplelist();
+											});
+										});
+
+									});
+									$(`#ripple-${item.boardid}-prev`).on('click', function () {
+										const newPage = currentPage - maxPagesToShow < 0 ? 0 : currentPage - maxPagesToShow;
+										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage}&size=10`, function (dataList) {
+											currentPage = newPage;
 											rippleid.empty();
 											ripplelist();
 										});
 									});
 
-								});
+									$(`#ripple-${item.boardid}-next`).on('click', function () {
+										const newPage = startPage + maxPagesToShow;
+										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage - 1}&size=10`, function (dataList) {
+											currentPage = newPage - 1;
+											
+											rippleid.empty();
+											ripplelist();
+										});
+									});
+
+
+
+								};
+
 
 
 							});
