@@ -65,7 +65,21 @@ public class BoardService {
 	public Page<Ripple> ripplefindBoardidPaged(Long boardid, Pageable pageable) {
 		return rippleRepository.findByBoard_Boardid(boardid, pageable);
 	}
-
+	@Transactional
+	public Long rippleupdate(RippleRequestDTO rippleRequestDTO) {
+		Ripple ripple = rippleRepository.findById(rippleRequestDTO.getRi_id()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
+		ripple.rippleupdate(rippleRequestDTO.getRi_content());
+		return rippleRequestDTO.getRi_id();
+	}
+	
+	@Transactional
+	public void rippledelete(Long ri_id) {
+		Ripple ripple = rippleRepository.findById(ri_id)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
+		rippleRepository.delete(ripple);
+	}
+	
+	
 	
 	@Transactional
 	public Long save(BoardRequestDto boardRequestDto, String userid) {
@@ -155,7 +169,10 @@ public class BoardService {
 		board.update(boardRequestDto.getContent());
 		return boardRequestDto.getBoardid();
 	}
-
+	
+	
+	
+	
 	@Transactional
 	public void delete(Long boardid) {
 		Board board = boardRepository.findById(boardid)

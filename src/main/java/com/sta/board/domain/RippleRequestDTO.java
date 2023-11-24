@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RippleRequestDTO {
-
+	
+	private Long ri_id;
 	private String ri_content;
 	private Board board;
 	private User user;
@@ -19,6 +20,7 @@ public class RippleRequestDTO {
 
 	public Ripple toEntity() {
 		return Ripple.builder()
+				
 				.ri_content(ri_content)
 				.board(board)
 				.user(user)

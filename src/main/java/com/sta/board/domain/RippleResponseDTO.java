@@ -19,7 +19,7 @@ public class RippleResponseDTO {
 	private Long ri_id;
 	private String ri_content;
 	private LocalDateTime ri_createdAt;
-	private LocalDateTime ri_updatedAt;
+	
 	private Long boardid;
 	private Long id;
 	private String nickname;
@@ -40,7 +40,7 @@ public class RippleResponseDTO {
 		this.ri_id = ripple.getRi_id();
 		this.ri_content = ripple.getRi_content();
 		this.ri_createdAt = ripple.getRi_createdAt();
-		this.ri_updatedAt = ripple.getRi_updatedAt();
+		
 		this.boardid = ripple.getBoard().getBoardid();
 		this.id = ripple.getUser().getId();
 		this.nickname = ripple.getUser().getNickname();

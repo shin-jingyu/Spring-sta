@@ -37,12 +37,7 @@ public class Ripple {
 	private String ri_content;
 
 	@CreationTimestamp
-	@Column(updatable = false)
 	private LocalDateTime ri_createdAt;
-	
-	@UpdateTimestamp
-	@Column(insertable = false)
-	private LocalDateTime ri_updatedAt;
 	
 	@ManyToOne
 	@JoinColumn(name = "boardid")
@@ -51,4 +46,9 @@ public class Ripple {
 	@ManyToOne
 	@JoinColumn(name = "id")
 	private User user;
+	
+	public void rippleupdate(String ri_content) {
+		this.ri_content = ri_content;
+    	this.ri_createdAt = LocalDateTime.now(); 
+	};
 }

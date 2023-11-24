@@ -67,12 +67,17 @@ public class BoardRestController {
 
 	}
 
-	/*
-	 * @PostMapping("/rippleUpdate") public ResponseEntity<Long>
-	 * rippleupdate(@RequestBody RippleRequestDTO rippleRequestDTO,Authentication
-	 * authentication) { Long updateripple = boardService.update(boardRequestDto);
-	 * return ResponseEntity.ok(updateripple); };
-	 */
+	@PostMapping("/rippleUpdate")
+	public ResponseEntity<Long> rippleupdate(@RequestBody RippleRequestDTO rippleRequestDTO) {
+		Long updateripple = boardService.rippleupdate(rippleRequestDTO);
+		return ResponseEntity.ok(updateripple);
+	};
+	@DeleteMapping("/rippledelete")
+	public ResponseEntity<Void> rippledelete(@RequestBody RippleRequestDTO rippleRequestDTO)  {
+		boardService.rippledelete(rippleRequestDTO.getRi_id());
+		return ResponseEntity.noContent().build();
+	}
+	
 	@PostMapping("/boardimg")
 	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
 		try {
