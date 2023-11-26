@@ -77,28 +77,9 @@ public class SecurityLoginController {
         return "login";
     }
 
-    @GetMapping("/info")
-    public String userInfo(Model model, Authentication auth) {
-        model.addAttribute("loginType", "security-login");
-        model.addAttribute("pageName", "Security 로그인");
+    
 
-        User loginUser = userService.getLoginUserByLoginId(auth.getName());
-
-        if(loginUser == null) {
-            return "redirect:/security-login/login";
-        }
-
-        model.addAttribute("user", loginUser);
-        return "info";
-    }
-
-    @GetMapping("/admin")
-    public String adminPage( Model model) {
-        model.addAttribute("loginType", "security-login");
-        model.addAttribute("pageName", "Security 로그인");
-
-        return "admin";
-    }
+    
 }
 	
 

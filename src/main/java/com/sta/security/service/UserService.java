@@ -48,21 +48,17 @@ public class UserService {
         return user;
     }
 	
-	public User getLoginUserById(Long userId) {
-        if(userId == null) return null;
-
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if(optionalUser.isEmpty()) return null;
-
-        return optionalUser.get();
-    }
+	
 	
 	public User getLoginUserByLoginId(String userId) {
         if(userId == null) return null;
 
         Optional<User> optionalUser = userRepository.findByUserid(userId);
         if(optionalUser.isEmpty()) return null;
-
+        System.out.println(optionalUser.get());
+       
         return optionalUser.get();
     }
+	
+	
 }

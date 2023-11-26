@@ -1,6 +1,5 @@
 package com.sta.security.domain;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,31 +16,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id",updatable = false,unique = true)
+	@Column(name = "id", updatable = false, unique = true)
 	private Long id;
-	
-	@Column(name="userid" ,nullable=false,unique = true)
+
+	@Column(name = "userid", nullable = false, unique = true)
 	private String userid;
-	
-	@Column(name="password",nullable=false)
+
+	@Column(name = "password", nullable = false)
 	private String password;
-	
 
 	@Column(name = "nickname")
 	private String nickname;
-	
-	@Column(name="text")
+
+	@Column(name = "text")
 	private String text;
-	
-	@Column(name="img")
+
+	@Column(name = "img")
 	private String img;
-	
+
 	private UserRole role;
-	
+
 	private String provider;
 	private String providerId;
+
 	
+
 }
