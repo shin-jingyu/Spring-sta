@@ -1,5 +1,7 @@
 package com.sta.security.domain;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,6 +44,19 @@ public class User {
 	private String provider;
 	private String providerId;
 
-	
+	public void update(UserUpdateDTO updateDTO) {
+
+		this.password = updateDTO.getPassword();
+		this.nickname = updateDTO.getNickname();
+
+		if (updateDTO.getText() != null) {
+			this.text = updateDTO.getText();
+		}
+		;
+
+		if (updateDTO.getImg() != null) {
+			this.img = updateDTO.getImg();
+		}
+	}
 
 }

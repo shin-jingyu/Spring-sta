@@ -82,13 +82,13 @@
 			formData.append('file', file);
 
 			$.ajax({
-				url: "/api/images/upload",
+				url: "/security-login/upload",
 				type: "POST",
 				data: formData,
 				processData: false,
 				contentType: false,
 				success: function (uniqueFileName) {
-					console.log(uniqueFileName);
+					
 					const imgField = $('<input>', {type: "hidden", name: "img", value: uniqueFileName});
 					$('#imguploads').append(imgField);
 				}

@@ -3,6 +3,8 @@ package com.sta.security.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,13 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sta.board.domain.BoardResponseDTO;
 import com.sta.board.service.BoardService;
 import com.sta.security.domain.JoinRequest;
 import com.sta.security.domain.LoginRequest;
 import com.sta.security.domain.User;
-import com.sta.security.service.UserImageService;
+import com.sta.security.domain.UserUpdateDTO;
 import com.sta.security.service.UserService;
 
 import jakarta.validation.Valid;
@@ -30,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityLoginController {
 	
 	private final UserService userService;
-	private final UserImageService imageService;
+	
 
     @GetMapping("/join")
     public String joinPage(Model model) {
@@ -63,12 +67,15 @@ public class SecurityLoginController {
             return "join";
         }
         
-        String img= imageService.finalImage(joinRequest.getImg());
+        String img= userService.finalImage(joinRequest.getImg());
         joinRequest.setImg(img);
         userService.join(joinRequest);
         return "redirect:/security-login";
     }
-
+    
+    
+    
+    
     @GetMapping("/login")
     public String loginPage(Model model) {
         model.addAttribute("loginType", "security-login");

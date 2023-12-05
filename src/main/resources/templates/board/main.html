@@ -22,7 +22,7 @@
 </header>
 
 <body>
-	<div style="display: flex;">
+	<div class="containers">
 
 		<div class="sidebar">
 			<ul class="list-group list-group-flush">
@@ -36,12 +36,12 @@
 					<h4><i class="bi bi-search"></i> 검색</h4>
 				</a>
 				</br>
-				<a class="list-group-item" style="background-color: #f0f0f0;">
+				<a class="list-group-item" style=" background-color: #f0f0f0;">
 					<h4>
 						<img th:if="${img ne null}" th:src="${img}"
-							style="width:30px ; height: 30px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+							style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
 						<img th:if="${img == null}" th:src="@{/uploads/final/main.jpg}"
-							style="width:30px ; height: 30px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+							style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
 						프로필
 					</h4>
 				</a>
@@ -73,7 +73,7 @@
 		</div>
 
 
-		<div class="content">
+		<div class="content" id="contentid">
 
 			<div id="mainboard" class="container">
 
@@ -162,18 +162,179 @@
 		var loggedInUserNickname = /*[[${nickname}]]*/'';
 		const imageInput = $('#boardfile');
 		let boardupdatemodal = $('#boardupdatemodal');
-		
-		
+		let contentid = $('#contentid');
+
+
+
 		$(`#userupdate`).on('click', function () {
 			mainboard.empty();
-			$.get('/api/user/info', function (user) {
-				
+			$.get('/security-login/info', function (user) {
+				const defaultImage = '/uploads/final/main.jpg';
+				contentid.append(`
+				<div class="container">
+					
+					<div class=" card mb-3"  style="max-width: 1000px;">
+						
+						  <div class="row g-0">
+							  
+							<div class="col-md-4 text-bg-light" id="ImageupdateInput"> 
+								
+									<img id="previewImageupdate" src="${user.img ? user.img : defaultImage}" class="img-fluid rounded-start" style="width:100% ; height: 87.9%;" >
+	 								<input id="originalImg" type="hidden" value="${user.img}" >
+	 							<div class="card-footer"  >
+							  		<input class="form-control" type="file" id="imagefileupdate" >
+								</div>
+							</div>
+							
+							<div class="col-md-8"> 
+								<div class="card-body">
+									
+							        <label class="col-form-label">닉네임</label>
+							        <div class="form-floating">
+								        <input class="form-control " id="nicknameval" type="text" value="${user.nickname}"  >
+								        <label for="nicknameval" >
+										   <span id="nicknamevals">
+											</span>		
+										</label>
+							        </div>
+							       
+							        <label class="col-form-label" >자기소개</label>
+							        <input class="form-control" id="textval" type="text" value="${user.text}" " >
+							        
+							        <label class="col-form-label" >비밀번호</label>
+							        <div class="form-floating">
+							        	<input class="form-control" id="passwordval" type="password" >
+							       	    <label for="passwordval" >
+											   <span  id="passwordvals">
+											</span>	
+										   </label>
+							        </div>
+							       	
+							        <label class="col-form-label" >비밀번호 확인</label>
+							        <div class="form-floating">
+							        	<input class="form-control" id="passwordcheckval" type="password" >
+							    	    <label for="passwordcheckval">
+											<span  id="passwordcheckvals">
+											</span>	
+										</label>
+							        </div>
+							    
+							    </div>
+							   
+							   	<div class="card-footer text-end">
+						  			 <button class="btn btn-outline-info" type="button" id="updatebtn">수정</button>
+						  		</div>
+						  	</div>	
+						  
+						</div>
+					</div>
+					
+				</div>
+					
+				`);
+				const imagefileupdate = $('#imagefileupdate');
+				const previewImageupdate = $('#previewImageupdate');
+				imagefileupdate.on("change", function () {
+					// 이미지를 선택하면 미리보기 이미지를 설정합니다.
+					const file = imagefileupdate[0].files[0];
+					const imageUrl = URL.createObjectURL(file);
+
+					previewImageupdate.attr('src', imageUrl);
+
+					const formData = new FormData();
+					formData.append('file', file);
+
+					$.ajax({
+						url: "/security-login/upload",
+						type: "POST",
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (uniqueFileName) {
+
+							const imgField = $('<input>', {type: "hidden", id: "imgval", value: uniqueFileName});
+
+							$('#ImageupdateInput').append(imgField);
+						}
+					});
+				});
+
+
+
+
+
+				$(`#updatebtn`).on('click', function () {
+					const nicknameval = $('#nicknameval').val();
+					const textval = $('#textval').val();
+					const passwordval = $('#passwordval').val();
+					const passwordcheckval = $('#passwordcheckval').val();
+					const imgval = $('#imgval').val();
+					const originalImgs = $('#originalImg').val();
+
+					fetch('/security-login/userUpdate', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							nickname: nicknameval,
+							text: textval,
+							password: passwordval,
+							passwordCheck: passwordcheckval,
+							img: imgval,
+							originalImg: originalImgs
+						}),
+
+					})
+						.then(response => {
+
+							if (!response.ok) {
+								return response.json().then(data => {
+								
+									if (data.nickname) {
+										
+										document.getElementById('nicknameval').classList.add('is-invalid');
+										document.getElementById('nicknamevals').textContent = data.nickname;
+									}else{
+										document.getElementById('nicknamevals').textContent = "";
+									}
+									
+									if (data.password) {
+										document.getElementById('passwordval').classList.add('is-invalid');
+										document.getElementById('passwordvals').textContent = data.password;
+									}else{
+										document.getElementById('passwordvals').textContent = "";
+									}
+									
+									if (data.passwordCheck) {
+										document.getElementById('passwordcheckval').classList.add('is-invalid');
+										document.getElementById('passwordcheckvals').textContent = data.passwordCheck;
+									}else{
+										document.getElementById('passwordcheckvals').textContent = "";
+									}
+
+
+
+								});
+							}
+							else if (response.ok) {
+								window.location.href = '/security-login/logout';
+							
+							}
+
+						})
+
+
+
+
+				});
+
 			});
 		});
-		
-		
-		
-			
+
+
+
+
 		// 페이지가 로드될 때 게시글 목록을 업데이트
 		function updateBoardList() {
 			$.get(apiURL, function (data) {
