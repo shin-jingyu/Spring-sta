@@ -5,8 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,32 @@ public class BoardService {
 		return list.stream().map(BoardResponseDTO::new).collect(Collectors.toList());
 	}
 
+	public List<String> boardDeleteImgSet(String userId) {
+		User user = userRepository.findByUserid(userId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+		List<Board> boards = boardRepository.findAllByUser_Id(user.getId());
+		List<String> imgs = new ArrayList<>();
+		for (Board board : boards) {
+			if (board.getBoardimg1() != null && !board.getBoardimg1().isEmpty()) {
+				imgs.add(board.getBoardimg1());
+			}
+			if (board.getBoardimg2() != null && !board.getBoardimg2().isEmpty()) {
+				imgs.add(board.getBoardimg2());
+			}
+			if (board.getBoardimg3() != null && !board.getBoardimg3().isEmpty()) {
+				imgs.add(board.getBoardimg3());
+			}
+			if (board.getBoardimg4() != null && !board.getBoardimg4().isEmpty()) {
+				imgs.add(board.getBoardimg4());
+			}
+			if (board.getBoardimg5() != null && !board.getBoardimg5().isEmpty()) {
+				imgs.add(board.getBoardimg5());
+			}
+		}
+
+		return imgs;
+	}
+	
 	@Transactional
 	public Long reppleSave(RippleRequestDTO rippleRequestDTO) {
 		Board board = boardRepository.findByBoardid(rippleRequestDTO.getBoardid())
@@ -65,20 +93,32 @@ public class BoardService {
 	public Page<Ripple> ripplefindBoardidPaged(Long boardid, Pageable pageable) {
 		return rippleRepository.findByBoard_Boardid(boardid, pageable);
 	}
+
 	@Transactional
 	public Long rippleupdate(RippleRequestDTO rippleRequestDTO) {
-		Ripple ripple = rippleRepository.findById(rippleRequestDTO.getRi_id()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
+		Ripple ripple = rippleRepository.findById(rippleRequestDTO.getRi_id())
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
 		ripple.rippleupdate(rippleRequestDTO.getRi_content());
 		return rippleRequestDTO.getRi_id();
 	}
-	
+
 	@Transactional
 	public void rippledelete(Long ri_id) {
 		Ripple ripple = rippleRepository.findById(ri_id)
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
 		rippleRepository.delete(ripple);
 	}
-	
+	@Transactional
+	public void deleteAllRipple(String userId) {
+		userRepository.findByUserid(userId)
+        .ifPresent(user -> rippleRepository.deleteAllByUser_Id(user.getId()));
+	};
+	@Transactional
+	public void deleteAllUserBoard(String userId) {
+		userRepository.findByUserid(userId)
+        .ifPresent(user -> boardRepository.deleteAllByUser_Id(user.getId()));
+		
+	}
 	
 	
 	@Transactional
@@ -169,10 +209,7 @@ public class BoardService {
 		board.update(boardRequestDto.getContent());
 		return boardRequestDto.getBoardid();
 	}
-	
-	
-	
-	
+
 	@Transactional
 	public void delete(Long boardid) {
 		Board board = boardRepository.findById(boardid)

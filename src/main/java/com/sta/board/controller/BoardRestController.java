@@ -56,7 +56,8 @@ public class BoardRestController {
 	}
 
 	@PostMapping("/ripple")
-	public ResponseEntity<Long> rippleCreate(@RequestBody RippleRequestDTO rippleRequestDTO,Authentication authentication) {
+	public ResponseEntity<Long> rippleCreate(@RequestBody RippleRequestDTO rippleRequestDTO,
+			Authentication authentication) {
 
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
@@ -72,12 +73,13 @@ public class BoardRestController {
 		Long updateripple = boardService.rippleupdate(rippleRequestDTO);
 		return ResponseEntity.ok(updateripple);
 	};
+
 	@DeleteMapping("/rippledelete")
-	public ResponseEntity<Void> rippledelete(@RequestBody RippleRequestDTO rippleRequestDTO)  {
+	public ResponseEntity<Void> rippledelete(@RequestBody RippleRequestDTO rippleRequestDTO) {
 		boardService.rippledelete(rippleRequestDTO.getRi_id());
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@PostMapping("/boardimg")
 	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
 		try {
@@ -136,4 +138,16 @@ public class BoardRestController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PostMapping("/deleteAlls")
+	public ResponseEntity<?> deleteAll(Authentication authentication) throws IOException {
+		
+		List<String> imgs = boardService.boardDeleteImgSet(authentication.getName());
+		boardService.deleteAllImages(imgs);
+		System.out.println("imgs 삭제완료");
+		boardService.deleteAllRipple(authentication.getName());
+		System.out.println("리플삭제완료");
+		boardService.deleteAllUserBoard(authentication.getName());
+		System.out.println("보드삭제 완료");
+		return ResponseEntity.ok().build();
+	}
 }

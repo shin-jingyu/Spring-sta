@@ -60,7 +60,12 @@ public class UserService {
 
 		return user;
 	}
-
+	public void userDelete(String userId) {
+		User user = userRepository.findByUserid(userId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+		userRepository.delete(user);
+	}
+	
 	public User getLoginUserByLoginId(String userId) {
 		if (userId == null)
 			return null;
@@ -98,7 +103,9 @@ public class UserService {
 	}
 
 	public String deleteImge(String deleteImg) throws IOException {
-		Path deleteImgPath = Paths.get(finalUploadDir, deleteImg);
+		String basePath = "/uploads/final/";
+		String relativePath = deleteImg.replaceFirst("^" + basePath, "");
+		Path deleteImgPath = Paths.get(finalUploadDir, relativePath);
 		if (Files.exists(deleteImgPath)) {
 			Files.delete(deleteImgPath);
 			return deleteImg;

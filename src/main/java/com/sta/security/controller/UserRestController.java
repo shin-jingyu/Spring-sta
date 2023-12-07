@@ -53,6 +53,20 @@ public class UserRestController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed.");
 		}
 	}
+	
+	@GetMapping("/deleteUser")
+	public ResponseEntity<String> deleteUser(Authentication authentication) throws IOException {
+	    User user = userService.getLoginUserByLoginId(authentication.getName());
+	    
+	    if (user.getImg() != null && !user.getImg().isEmpty()) {
+	        userService.deleteImge(user.getImg());
+	    }
+	    
+	    userService.userDelete(user.getUserid());
+	    
+	    // 리다이렉트 URL 반환
+	    return ResponseEntity.ok("/security-login/logout");
+	}
 
 	@PostMapping("/userUpdate")
 	public ResponseEntity<?> userUpdate(@Valid @RequestBody UserUpdateDTO updateDTO, BindingResult bindingResult,

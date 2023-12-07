@@ -21,7 +21,9 @@ public class BoardRequestDto {
 	private String boardimg5;
 	private String content;
 	private User user;
+	
 	private List<String> boardimgs;
+	
 	public Board toEntity() {
 		return Board.builder()
 				.boardimg1(boardimg1)

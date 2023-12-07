@@ -59,6 +59,9 @@
 						<li><a class="dropdown-item" id="userupdate">
 								<h5><i class="bi bi-person-bounding-box"></i> 회원정보</h5>
 							</a></li>
+						<li><a class="dropdown-item" id="userdelete">
+								<h5><i class="bi bi-person-bounding-box"></i> 회원탈퇴</h5>
+							</a></li>
 						<li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#Modal"
 								data-bs-whatever="@mdo">
 								<h5><i class="bi bi-plus-square"></i>글작성</h5>
@@ -156,18 +159,42 @@
 <script th:inline="javascript">
 	$(document).ready(function () {
 		// 서버 API의 URL 및 필요한 HTML 엘리먼트 가져오기
-		var apiURL = '/api/board';
-		var mainboard = $('#mainboard');
-		var createModal = $('#Modal'); // 글 작성 모달
-		var loggedInUserNickname = /*[[${nickname}]]*/'';
+		const apiURL = '/api/board';
+		const mainboard = $('#mainboard');
+		const createModal = $('#Modal'); // 글 작성 모달
+		let loggedInUserNickname = /*[[${nickname}]]*/'';
 		const imageInput = $('#boardfile');
-		let boardupdatemodal = $('#boardupdatemodal');
-		let contentid = $('#contentid');
+		const boardupdatemodal = $('#boardupdatemodal');
+		const contentid = $('#contentid');
+		const userdelete = $('#userdelete');
 
-
+		$(`#userdelete`).on('click', function () {
+			const confirmation = confirm('회원탈퇴 계속하시겠습니까?');
+			if (confirmation) {
+				$.ajax({
+					url: apiURL + "/deleteAlls",
+					type: "POST",
+					processData: false,
+					contentType: false,
+					success: function () {
+						
+						$.ajax({
+							url: "/security-login/deleteUser",
+							type: "GET",
+							processData: false,
+							contentType: false,
+							success: function (redirectUrl) {
+								 window.location.href = redirectUrl;
+							}
+						});
+					}
+				});
+			}
+		});
 
 		$(`#userupdate`).on('click', function () {
 			mainboard.empty();
+			contentid.empty();
 			$.get('/security-login/info', function (user) {
 				const defaultImage = '/uploads/final/main.jpg';
 				contentid.append(`
@@ -290,26 +317,26 @@
 
 							if (!response.ok) {
 								return response.json().then(data => {
-								
+
 									if (data.nickname) {
-										
+
 										document.getElementById('nicknameval').classList.add('is-invalid');
 										document.getElementById('nicknamevals').textContent = data.nickname;
-									}else{
+									} else {
 										document.getElementById('nicknamevals').textContent = "";
 									}
-									
+
 									if (data.password) {
 										document.getElementById('passwordval').classList.add('is-invalid');
 										document.getElementById('passwordvals').textContent = data.password;
-									}else{
+									} else {
 										document.getElementById('passwordvals').textContent = "";
 									}
-									
+
 									if (data.passwordCheck) {
 										document.getElementById('passwordcheckval').classList.add('is-invalid');
 										document.getElementById('passwordcheckvals').textContent = data.passwordCheck;
-									}else{
+									} else {
 										document.getElementById('passwordcheckvals').textContent = "";
 									}
 
@@ -319,7 +346,7 @@
 							}
 							else if (response.ok) {
 								window.location.href = '/security-login/logout';
-							
+
 							}
 
 						})

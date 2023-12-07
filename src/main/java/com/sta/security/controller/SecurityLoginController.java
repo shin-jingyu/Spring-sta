@@ -44,7 +44,8 @@ public class SecurityLoginController {
         model.addAttribute("joinRequest", new JoinRequest());
         return "join";
     }
-
+    
+    
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute JoinRequest joinRequest, BindingResult bindingResult, Model model) throws IOException {
         model.addAttribute("loginType", "security-login");
