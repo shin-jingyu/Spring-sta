@@ -16,63 +16,64 @@
 
 </head>
 <header>
-	<div>
+	<div class="shadow" style="height: 100%; display: flex; justify-content: center; align-items: center;">
 		<h1><i class="bi bi-star-half"></i> sta</h1>
 	</div>
 </header>
 
 <body>
-	<div class="containers">
+	<div class="containers ">
 
 		<div class="sidebar">
-			<ul class="list-group list-group-flush">
-				</br>
-				<a class="list-group-item" type="button" href="http://localhost:8080/board"
-					style="background-color: #f0f0f0;">
-					<h4><i class="bi bi-house-door-fill"></i> Home</h4>
-				</a>
-				</br>
-				<a class="list-group-item" style="background-color: #f0f0f0;">
-					<h4><i class="bi bi-search"></i> 검색</h4>
-				</a>
-				</br>
-				<a class="list-group-item" style=" background-color: #f0f0f0;">
-					<h4>
-						<img th:if="${img ne null}" th:src="${img}"
-							style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
-						<img th:if="${img == null}" th:src="@{/uploads/final/main.jpg}"
-							style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
-						프로필
-					</h4>
-				</a>
-				</br>
-				<div class="dropdown">
-					<a class="list-group-item " type="button" data-bs-toggle="dropdown" aria-expanded="false"
+			<div class="container " style="margin-top: 20%;">
+				<ul class="list-group list-group-flush">
+					</br>
+					<a class="list-group-item" type="button" href="http://localhost:8080/board"
 						style="background-color: #f0f0f0;">
-						<h4><i class="bi bi-list"></i>더보기</h4>
+						<h4><i class="bi bi-house-door-fill"></i> Home</h4>
 					</a>
-					<ul class="dropdown-menu">
-						<li><a class="dropdown-item" href="/security-login/logout">
-								<h5><i class="bi bi-person-fill-dash"></i> 로그아웃
-							</a></h5>
-						</li>
-						<li><a class="dropdown-item" id="userupdate">
-								<h5><i class="bi bi-person-bounding-box"></i> 회원정보</h5>
-							</a></li>
-						<li><a class="dropdown-item" id="userdelete">
-								<h5><i class="bi bi-person-bounding-box"></i> 회원탈퇴</h5>
-							</a></li>
-						<li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#Modal"
-								data-bs-whatever="@mdo">
-								<h5><i class="bi bi-plus-square"></i>글작성</h5>
-							</a></li>
-					</ul>
+					</br>
+					<a class="list-group-item" style="background-color: #f0f0f0;">
+						<h4><i class="bi bi-search"></i> 검색</h4>
+					</a>
+					</br>
+					<a class="list-group-item" style=" background-color: #f0f0f0;">
+						<h4>
+							<img th:if="${img ne null}" th:src="${img}"
+								style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+							<img th:if="${img == null}" th:src="@{/uploads/final/main.jpg}"
+								style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+							프로필
+						</h4>
+					</a>
+					</br>
+					<div class="dropdown">
+						<a class="list-group-item " type="button" data-bs-toggle="dropdown" aria-expanded="false"
+							style="background-color: #f0f0f0;">
+							<h4><i class="bi bi-list"></i>더보기</h4>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="/security-login/logout">
+									<h5><i class="bi bi-person-fill-dash"></i> 로그아웃
+								</a></h5>
+							</li>
+							<li><a class="dropdown-item" id="userupdate">
+									<h5><i class="bi bi-person-bounding-box"></i> 회원정보</h5>
+								</a></li>
+							<li><a class="dropdown-item" id="userdelete">
+									<h5><i class="bi bi-person-bounding-box"></i> 회원탈퇴</h5>
+								</a></li>
+							<li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#Modal"
+									data-bs-whatever="@mdo">
+									<h5><i class="bi bi-plus-square"></i>글작성</h5>
+								</a></li>
+						</ul>
 
 
 
-				</div>
-			</ul>
-
+					</div>
+				</ul>
+			</div>
 		</div>
 
 
@@ -177,14 +178,14 @@
 					processData: false,
 					contentType: false,
 					success: function () {
-						
+
 						$.ajax({
 							url: "/security-login/deleteUser",
 							type: "GET",
 							processData: false,
 							contentType: false,
 							success: function (redirectUrl) {
-								 window.location.href = redirectUrl;
+								window.location.href = redirectUrl;
 							}
 						});
 					}

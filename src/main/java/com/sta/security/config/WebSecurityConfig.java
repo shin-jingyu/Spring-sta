@@ -43,6 +43,7 @@ public class WebSecurityConfig {
 	                          .loginPage("/security-login/login")
 	                          .defaultSuccessUrl("/board")
 	                          .failureUrl("/security-login/login")
+	                          .failureHandler(new CustomAuthenticationFailureHandler())
 	                          .permitAll()
 	          )
 	          .logout(logout ->

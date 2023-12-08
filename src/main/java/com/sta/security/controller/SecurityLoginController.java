@@ -68,8 +68,12 @@ public class SecurityLoginController {
             return "join";
         }
         
-        String img= userService.finalImage(joinRequest.getImg());
-        joinRequest.setImg(img);
+        if (joinRequest.getImg()!=null && !joinRequest.getImg().isEmpty()) {
+        	String img= userService.finalImage(joinRequest.getImg());
+        	joinRequest.setImg(img);
+		}
+        
+        
         userService.join(joinRequest);
         return "redirect:/security-login";
     }
