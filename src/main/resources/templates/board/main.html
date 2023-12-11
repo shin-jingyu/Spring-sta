@@ -461,7 +461,13 @@
 		                        </div>
 		                    </div>
 		                   	<div class="card-footer text-body-secondary">
-								   ${item.content}
+								 <div style="font-size: 1.5em;">   
+									 <div id="like-${item.boardid}" >
+										
+									 </div>
+								 	 ${item.content}
+								 </div> 
+								
 							</div>	 
 		                    <div class="card-footer text-body-secondary">
 								<div class="input-group mb-3">
@@ -485,8 +491,69 @@
 
 
 
-
+					licks()
 					ripplelists()
+
+					function licks() {
+						const lickid = $(`#like-${item.boardid}`);
+						let requestData = {
+							boardid: `${item.boardid}`
+						};
+
+						$.ajax({
+							url: '/api/like',
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify(requestData),
+							success: function (data) {
+								lickid.empty();
+								const boardIdAttr = (data === 0) ? item.boardid : `${item.boardid}-fill`;
+								const iconClass = (data === 0) ? 'bi bi-heart' : 'bi bi-heart-fill';
+
+								const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+								lickid.append(icon);
+							}
+						});
+						lickid.on('click', 'i', function () {
+							const boardId = $(this).data('boardid');
+							
+
+							if (boardId == item.boardid) {
+								$.ajax({
+									url: '/api/like/create',
+									type: 'POST',
+									contentType: 'application/json',
+									data: JSON.stringify(requestData),
+									success: function (data) {
+										lickid.empty();
+										const boardIdAttr = `${item.boardid}-fill`;
+										const iconClass = 'bi bi-heart-fill';
+
+										const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+										lickid.append(icon);
+									}
+								});
+
+							} else {
+								$.ajax({
+									url: '/api/like/delete',
+									type: 'POST',
+									contentType: 'application/json',
+									data: JSON.stringify(requestData),
+									success: function (data) {
+										lickid.empty();
+										const boardIdAttr = item.boardid;
+										const iconClass = 'bi bi-heart';
+
+										const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+										lickid.append(icon);
+									}
+								});
+
+							}
+
+						});
+					};
 
 
 					$(`#ripple-create${item.boardid}`).on('click', function () {
