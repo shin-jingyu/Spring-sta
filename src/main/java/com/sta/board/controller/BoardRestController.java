@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sta.board.domain.Board;
 import com.sta.board.domain.BoardRequestDto;
 import com.sta.board.domain.BoardResponseDTO;
 import com.sta.board.domain.Ripple;
 import com.sta.board.domain.RippleRequestDTO;
 import com.sta.board.domain.RippleResponseDTO;
 import com.sta.board.service.BoardService;
+import com.sta.board.service.LikeService;
+import com.sta.board.service.RippleService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +40,8 @@ import lombok.RequiredArgsConstructor;
 public class BoardRestController {
 
 	private final BoardService boardService;
-
+	private final RippleService rippleService;
+	private final LikeService likeService ;
 	@GetMapping
 	public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
 
@@ -46,39 +50,16 @@ public class BoardRestController {
 		return ResponseEntity.ok(boards);
 
 	}
-
-	@GetMapping("/ripple")
-	public ResponseEntity<Page<RippleResponseDTO>> getRipple(@RequestParam Long boardid, Pageable pageable) {
-		Page<Ripple> ripples = boardService.ripplefindBoardidPaged(boardid, pageable);
-		Page<RippleResponseDTO> responseDTOPage = ripples.map(RippleResponseDTO::new);
-
-		return ResponseEntity.ok(responseDTOPage);
+	@GetMapping("/mypage")
+	public ResponseEntity<List<Board>> mypage(Authentication authentication){
+		List<Board> list= boardService.myList(authentication.getName());
+		
+		
+		return ResponseEntity.ok(list);
 	}
 
-	@PostMapping("/ripple")
-	public ResponseEntity<Long> rippleCreate(@RequestBody RippleRequestDTO rippleRequestDTO,
-			Authentication authentication) {
+	
 
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-		rippleRequestDTO.setUserid(userDetails.getUsername());
-
-		Long rippleid = boardService.reppleSave(rippleRequestDTO);
-		return ResponseEntity.ok(rippleid);
-
-	}
-
-	@PostMapping("/rippleUpdate")
-	public ResponseEntity<Long> rippleupdate(@RequestBody RippleRequestDTO rippleRequestDTO) {
-		Long updateripple = boardService.rippleupdate(rippleRequestDTO);
-		return ResponseEntity.ok(updateripple);
-	};
-
-	@DeleteMapping("/rippledelete")
-	public ResponseEntity<Void> rippledelete(@RequestBody RippleRequestDTO rippleRequestDTO) {
-		boardService.rippledelete(rippleRequestDTO.getRi_id());
-		return ResponseEntity.noContent().build();
-	}
 
 	@PostMapping("/boardimg")
 	public ResponseEntity<List<String>> boardimgupload(@RequestParam("files") MultipartFile[] files) {
@@ -126,14 +107,16 @@ public class BoardRestController {
 	}
 
 	@PostMapping("/update")
-	public ResponseEntity<Long> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
-		Long updatedBoardId = boardService.update(boardRequestDto);
-		return ResponseEntity.ok(updatedBoardId);
+	public ResponseEntity<String> updateBoard(@RequestBody BoardRequestDto boardRequestDto) {
+		String update = boardService.update(boardRequestDto);
+		return ResponseEntity.ok(update);
 	}
 
 	@DeleteMapping("/delete")
 	public ResponseEntity<Void> deleteBoard(@RequestBody BoardRequestDto boardRequestDto) throws IOException {
 		boardService.deleteAllImages(boardRequestDto.getBoardimgs());
+		rippleService.deleteAllBoardRipple(boardRequestDto.getBoardid());
+		likeService.deleteAllBoardLike(boardRequestDto.getBoardid());
 		boardService.delete(boardRequestDto.getBoardid());
 		return ResponseEntity.noContent().build();
 	}
@@ -144,7 +127,7 @@ public class BoardRestController {
 		List<String> imgs = boardService.boardDeleteImgSet(authentication.getName());
 		boardService.deleteAllImages(imgs);
 		System.out.println("imgs 삭제완료");
-		boardService.deleteAllRipple(authentication.getName());
+		rippleService.deleteAllRipple(authentication.getName());
 		System.out.println("리플삭제완료");
 		boardService.deleteAllUserBoard(authentication.getName());
 		System.out.println("보드삭제 완료");

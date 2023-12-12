@@ -11,4 +11,9 @@ public class LikeResponseDTO {
 	private Long boardid;
 	private Long id;
 	private String userid;
+	
+	
+	private Long countcheck;
+	private Long countBoard;
+
 }

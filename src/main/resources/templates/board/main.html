@@ -37,12 +37,12 @@
 						<h4><i class="bi bi-search"></i> 검색</h4>
 					</a>
 					</br>
-					<a class="list-group-item" style=" background-color: #f0f0f0;">
+					<a class="list-group-item" id="myPage" style=" background-color: #f0f0f0;">
 						<h4>
 							<img th:if="${img ne null}" th:src="${img}"
 								style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
 							<img th:if="${img == null}" th:src="@{/uploads/final/main.jpg}"
-								style="width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+								style=" width:50px ; height: 50px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
 							프로필
 						</h4>
 					</a>
@@ -147,10 +147,10 @@
 
 
 
-
 		<div id="boardupdatemodal">
 
 		</div>
+
 	</div>
 
 </body>
@@ -168,6 +168,391 @@
 		const boardupdatemodal = $('#boardupdatemodal');
 		const contentid = $('#contentid');
 		const userdelete = $('#userdelete');
+		const defaultImage = '/uploads/final/main.jpg';
+		const modal2 = $('#modal2');
+
+		$(`#myPage`).on('click', function () {
+			mainboard.empty();
+			$.get(apiURL + '/mypage', function (list) {
+
+				mainboard.append(`
+		        <div class="container " style=" background-color: white;">
+		            <div class="row shadow">
+		                <div class="col" >
+							<img src="${list[0].user.img ? list[0].user.img : defaultImage}" class="img-thumbnail" 
+							style="width:100px ; height: 100px; margin-right: 10px; ">
+		                    <a style="font-size: 2.5em;">${list[0].user.nickname}</a>
+		                </div>	
+		            </div>	
+		            <div class="row" id="dynamicRows">
+					</div>	 
+		        </div>
+		    `);
+				let dynamicRows = $('#dynamicRows');
+				list.forEach(function (item) {
+					const myPageImageUrl = [item.boardimg1, item.boardimg2, item.boardimg3, item.boardimg4, item.boardimg5].filter(Boolean);
+
+					let dynamicDiv = $(`
+						
+					        <div class="col-4 " id="mypage-${item.boardid}"  data-bs-target="#mypage-modal-${item.boardid}">
+					            <img src="${item.boardimg1}" class="img-thumbnail" 
+								style="width:300px ; height: 300px; margin-bottom: 10px;margin-top: 10px;">
+					        </div>
+				        
+				    `);
+					dynamicRows.append(dynamicDiv);
+
+					$(`#mypage-${item.boardid}`).on('click', function () {
+
+						contentid.append(`
+				            <div class="modal " id="mypage-modal-${item.boardid}" tabindex="-1" >
+				                <div class="modal-dialog modal-dialog-centered modal-xl"  >
+				                    <div class="modal-content">
+				                        <div class="modal-header">
+				                            <h5 class="modal-title">${item.user.nickname}</h5>
+				                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				                        </div>
+				                        <div class="modal-body">
+				                          <div class="container-fluid">
+										  	<div class="row">
+				                          	 
+				                          	 <div class="col-md-7 ">
+												<div class="row shadow">     
+													<div id="carouselMy-${item.boardid}" class="carousel slide">
+													  <div class="carousel-inner">    
+														${myPageImageUrl.map((imageUrl, index) => `
+														<div id="img-${index}" class="carousel-item ${index === 0 ? 'active' : ''}">
+														<img src="${imageUrl}"  class="d-block w-100" style="height: 600px;"  alt="Image ${index + 1}">
+														</div>
+														`).join('')}    
+													  </div>
+													  <button class="carousel-control-prev" type="button" data-bs-target="#carouselMy-${item.boardid}" data-bs-slide="prev">
+													    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+													  </button>
+													  <button class="carousel-control-next" type="button" data-bs-target="#carouselMy-${item.boardid}" data-bs-slide="next">
+													    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+													  </button>
+													</div>	  
+												</div> 
+												<div class="row shadow" style=" margin-bottom: 10px;margin-top: 10px;" >  
+													<div id="update-my-item-${item.content}">
+													  <a style="font-size: 2em;">${item.content}</a>
+													</div> 
+												</div>	
+											 </div>
+      										 <div class="col-md-5 " >
+												 <div class="row">  
+												 	<div class="dropdown">
+														<button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							                                •••
+							                            </button>
+							                            
+							                            <ul class="dropdown-menu dropdown-menu-dark">
+															<li><a class="dropdown-item active" id="boatd-my-update-${item.boardid}">수정</a></li>
+															<li><a class="dropdown-item" id="boatd-my-delete-${item.boardid}">삭제</a></li>
+							                            </ul>
+							                        </div>  
+							                    </div>     
+												<div class="row">
+													<div class="input-group mb-3">
+													<input type="text" class="form-control" id="ripple-my-input${item.boardid}"; aria-describedby="ripple-my-create${item.boardid}">
+													<button class="btn btn-outline-info" type="button" id="ripple-my-create${item.boardid}">댓글</button>
+													</div>
+												</div>
+												<div class="row" id="mypage-riple-${item.boardid}">
+												</div>
+											
+
+											 
+											 
+											 </div>
+				                          	
+				                          	</div>
+				                          </div>
+				                         
+				                        </div>
+				                    </div>
+				                </div>
+				            </div>
+				        `);
+						const mypageriple = $(`#mypage-riple-${item.boardid}`);
+						$(`#boatd-my-update-${item.boardid}`).on('click', function () {
+							const contentmy = $(`#update-my-item-${item.content}`);
+							contentmy.empty();
+							contentmy.append(`
+								<div class="input-group mb-3" >
+									<input type="text" value="${item.content}" class="form-control" id="board-my-input${item.boardid}"; aria-describedby="board-my-create${item.boardid}">
+									<button class="btn btn-outline-info" type="button" id="board-my-create${item.boardid}">수정</button>
+								</div>
+							`);
+							$(`#board-my-create${item.boardid}`).on('click', function () {
+								let boardcontent = $(`#board-my-input${item.boardid}`).val();
+								if (boardcontent == '' || null) {
+									alert("내용을 입력해주세요")
+								} else {
+									$.ajax({
+										url: apiURL + '/update',
+										type: 'POST',
+										contentType: 'application/json',
+										data: JSON.stringify({
+											content: boardcontent,
+											boardid: item.boardid
+										}),
+										success: function (update) {
+
+											contentmy.empty();
+											contentmy.append(`
+										      <a style="font-size: 2em;">${update}</a>
+										    `);
+										},
+										error: function (error) {
+											console.error('Error during PATCH request:', error);
+										}
+									});
+								}
+							});
+						});
+
+
+						$(`#boatd-my-delete-${item.boardid}`).on('click', function () {
+							if (confirm("삭제하시겠습니까?")) {
+								$.ajax({
+									url: apiURL + '/delete',
+									type: 'DELETE',
+									contentType: 'application/json',
+									data: JSON.stringify({
+										boardimgs: myPageImageUrl,
+										boardid: item.boardid
+									}),
+									success: function () {
+										
+										$(`#mypage-modal-${item.boardid}`).modal('hide');
+
+										updateBoardList();
+									},
+									error: function (error) {
+										console.error('Error during delete request:', error);
+									}
+								});
+
+							}
+
+						});
+
+
+
+
+
+
+						$(`#ripple-my-create${item.boardid}`).on('click', function () {
+							const rippleinputSelector = `#ripple-my-input${item.boardid}`;
+
+							let inputval = $(rippleinputSelector).val();
+							if (inputval === '' || inputval === null) {
+								alert("내용을 입력해주세요")
+							} else {
+								fetch(apiURL + '/ripple', {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										ri_content: inputval,
+										boardid: item.boardid
+									}),
+								})
+									.then(() => {
+										mypageriple.empty();
+										myPageRipple();
+									})
+									.catch(error => console.error('Error during ripple request:', error));
+							}
+						});
+
+
+						mypageriple.empty();
+						myPageRipple();
+
+						function myPageRipple() {
+
+							let Pagenum = 0;
+							$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${Pagenum}&size=10`, function (dataList) {
+
+
+								dataList.content.forEach(data => {
+
+									mypageriple.append(`
+										
+							            <div class="card">
+											
+							                <div class="card-body d-flex flex-row justify-content-between">
+							                    <h6 class="card-title"> 
+												 <img src="${data.img ? data.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">	
+													${data.nickname}
+													   • ${data.timeDifferences}
+												</h6>
+							                    <div class="ml-auto">
+							                        <div class="dropdown">
+														<button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							                                •••
+							                            </button>
+							                            
+							                            <ul class="dropdown-menu dropdown-menu-dark">
+															${loggedInUserNickname === data.nickname ? `
+							                                <li><a class="dropdown-item active" id="ripple-update-${data.ri_id}">수정</a></li>
+															` : ''}							                               
+															<li><a class="dropdown-item" id="ripple-delete-${data.ri_id}">삭제</a></li>
+							                            </ul>
+							                            
+							                        </div>
+							                    </div>
+							                </div>
+							                
+							                <div  class="container" id="data-my-${data.ri_id}">
+							                	<h5 class="card-text " style="margin-bottom:20px;" >${data.ri_content}</h5>
+							                </div>
+							                
+							               
+							            </div>
+							           
+							        `);
+									$(`#ripple-update-${data.ri_id}`).on('click', function () {
+										const ricontents = $(`#data-my-${data.ri_id}`);
+										ricontents.empty();
+										ricontents.append(`
+											<div class="input-group mb-3">
+												<input type="text" class="form-control" value="${data.ri_content}" id="ripple-my-input${data.ri_id}"; aria-describedby="ripple-my-create${item.boardid}">
+												<button class="btn btn-outline-primary" type="button" id="update-my-ricontent-${data.ri_id}">수정</button>
+											</div>
+										`);
+										$(`#update-my-ricontent-${data.ri_id}`).on('click', function () {
+											const ripplemyinput = $(`#ripple-my-input${data.ri_id}`).val();
+
+											if (ripplemyinput == '' || null) {
+												alert("내용을 입력해주세요");
+											} else {
+												fetch(apiURL + '/rippleUpdate', {
+													method: 'POST',
+													headers: {
+														'Content-Type': 'application/json',
+
+													},
+													body: JSON.stringify({
+														ri_content: ripplemyinput,
+														ri_id: data.ri_id
+													}),
+
+												})
+
+													.then(() => {
+														mypageriple.empty();
+														myPageRipple();
+
+													})
+													.catch(error => console.error('Error during PATCH request:', error));
+											}
+										});
+									})
+
+
+
+
+									$(`#ripple-delete-${data.ri_id}`).on('click', function () {
+										if (confirm("삭제하시겠습니까?")) {
+											fetch(apiURL + '/rippledelete', {
+												method: 'DELETE',
+												body: JSON.stringify({
+													ri_id: data.ri_id
+												}),
+												headers: {
+													'Content-Type': 'application/json',
+												},
+											})
+												.then(() => {
+													mypageriple.empty();
+													myPageRipple();
+												})
+												.catch(error => console.error('Error during delete request:', error))
+
+										}
+
+									});
+								});
+
+								if (dataList.totalPages > 1) {
+									const maxPagesToShow = 10;
+									const totalPages = dataList.totalPages;
+
+									const startPage = Math.floor((Pagenum) / maxPagesToShow) * maxPagesToShow + 1;
+									const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+									rippleid.append(`
+									  <nav aria-label="Page navigation example">
+							            <ul class="pagination">
+							                ${startPage === 1 ? '' : `<li class="page-item"><a class="page-link" aria-label="Previous" id="ripple-${item.boardid}-prev" data-page="${Pagenum - maxPagesToShow}"><span aria-hidden="true">&laquo;</span></a></li>`}
+							                
+							                ${Array.from({length: endPage - startPage + 1}, (_, index) => {
+										const pageNumber = startPage + index;
+										return `<li class="page-item"><a class="page-link" id="page-link-${item.boardid}-${pageNumber}" data-page="${pageNumber}">${pageNumber}</a></li>`;
+									}).join('')}
+							                
+							                ${endPage >= totalPages ? '' : `<li class="page-item"><a class="page-link" id="ripple-${item.boardid}-next" aria-label="Next" data-page="${Pagenum + maxPagesToShow}"><span aria-hidden="true">&raquo;</span></a></li>`}
+							            </ul>
+							        </nav>
+									`);
+
+
+
+									Array.from({length: endPage - startPage + 1}, (_, index) => {
+										const pageNumber = startPage + index;
+
+										$(`#page-link-${item.boardid}-${pageNumber}`).on('click', function () {
+
+											$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${pageNumber - 1}&size=10`, function (dataList) {
+												Pagenum = pageNumber - 1;
+												mypageriple.empty();
+												myPageRipple();
+											});
+										});
+
+									});
+									$(`#ripple-${item.boardid}-prev`).on('click', function () {
+										const newPage = Pagenum - maxPagesToShow < 0 ? 0 : Pagenum - maxPagesToShow;
+										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage}&size=10`, function (dataList) {
+											Pagenum = newPage;
+											mypageriple.empty();
+											myPageRipple();
+										});
+									});
+
+									$(`#ripple-${item.boardid}-next`).on('click', function () {
+										const newPage = startPage + maxPagesToShow;
+										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage - 1}&size=10`, function (dataList) {
+											Pagenum = newPage - 1;
+
+											mypageriple.empty();
+											myPageRipple();
+										});
+									});
+
+
+
+								};
+
+
+
+							});
+						};
+
+
+						// 모달 표시
+						$(`#mypage-modal-${item.boardid}`).modal('show');
+
+					});
+
+				});
+			});
+		});
 
 		$(`#userdelete`).on('click', function () {
 			const confirmation = confirm('회원탈퇴 계속하시겠습니까?');
@@ -197,7 +582,7 @@
 			mainboard.empty();
 			contentid.empty();
 			$.get('/security-login/info', function (user) {
-				const defaultImage = '/uploads/final/main.jpg';
+
 				contentid.append(`
 				<div class="container">
 					
@@ -506,17 +891,20 @@
 							contentType: 'application/json',
 							data: JSON.stringify(requestData),
 							success: function (data) {
-								lickid.empty();
-								const boardIdAttr = (data === 0) ? item.boardid : `${item.boardid}-fill`;
-								const iconClass = (data === 0) ? 'bi bi-heart' : 'bi bi-heart-fill';
 
+								lickid.empty();
+								const boardIdAttr = (data.countcheck === 0) ? item.boardid : `${item.boardid}-fill`;
+								const iconClass = (data.countcheck === 0) ? 'bi bi-heart' : 'bi bi-heart-fill';
 								const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+								const likenum = $('<a></a>').text(data.countBoard);
 								lickid.append(icon);
+								lickid.append(likenum);
 							}
 						});
+
 						lickid.on('click', 'i', function () {
 							const boardId = $(this).data('boardid');
-							
+
 
 							if (boardId == item.boardid) {
 								$.ajax({
@@ -530,7 +918,10 @@
 										const iconClass = 'bi bi-heart-fill';
 
 										const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+										const likenum = $('<a></a>').text(data);
 										lickid.append(icon);
+										lickid.append(likenum);
+
 									}
 								});
 
@@ -546,7 +937,9 @@
 										const iconClass = 'bi bi-heart';
 
 										const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+										const likenum = $('<a></a>').text(data);
 										lickid.append(icon);
+										lickid.append(likenum);
 									}
 								});
 
@@ -896,16 +1289,6 @@
 						});
 
 					};
-
-
-
-
-
-
-
-
-
-
 					$(`#updates-${item.boardid}`).on('click', function () {
 						let boardcontent = $(`#contentupdate-${item.boardid}`).val();
 						if (boardcontent == '' || null) {
@@ -1060,5 +1443,4 @@
 		});
 
 	});
-
 </script>

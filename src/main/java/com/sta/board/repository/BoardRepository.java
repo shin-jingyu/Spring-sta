@@ -21,6 +21,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	@Modifying
 	@Query("DELETE FROM Board b WHERE b.user.id = :userId")
 	void deleteAllByUser_Id(@Param("userId") Long userId);
+	
+	@Query("SELECT b FROM Board b WHERE b.user.id = :userId")
+	List<Board> findBoardsByUserId(@Param("userId") Long userId);
 
+	
 	
 }

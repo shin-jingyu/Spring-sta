@@ -21,25 +21,29 @@ public class LikeRestController {
 	private final LikeService likeService;
 	
 	@PostMapping
-	public ResponseEntity<Long> countLike(@RequestBody LikeResponseDTO dto,Authentication authentication){
+	public ResponseEntity<LikeResponseDTO> countLike(@RequestBody LikeResponseDTO dto,Authentication authentication){
 		dto.setUserid(authentication.getName());
 		Long like = likeService.countLike(dto);
-		return ResponseEntity.ok(like);
+		Long boardnum = likeService.countboard(dto.getBoardid());
+		dto.setCountBoard(boardnum);
+		dto.setCountcheck(like);
+		return ResponseEntity.ok(dto);
 	}
 	
 	@PostMapping("/create")
 	public ResponseEntity<Long> createLike(@RequestBody LikeRequestDTO dto, Authentication authentication){
 		dto.setUserid(authentication.getName());
-		Long like = likeService.creatLike(dto);
-		return ResponseEntity.ok(like);
+		likeService.creatLike(dto);
+		Long boardNum = likeService.countboard(dto.getBoardid());
+		return ResponseEntity.ok(boardNum);
 		
 	}
 	@PostMapping("/delete")
 	public ResponseEntity<Long> deleteLike(@RequestBody LikeRequestDTO dto, Authentication authentication){
 		dto.setUserid(authentication.getName());
-		Long like = likeService.deleteLike(dto);
-		
-		return ResponseEntity.ok(like);
+		likeService.deleteLike(dto);
+		Long boardNum = likeService.countboard(dto.getBoardid());
+		return ResponseEntity.ok(boardNum);
 		
 	}
 }

@@ -22,12 +22,22 @@ public class LikeService {
 	private final LikeRepository likeRepository;
 	private final UserRepository userRepository;
 	private final BoardRepository boardRepository;
+	
 	public Long countLike(LikeResponseDTO dto) {
 		User user= userRepository.findByUserid(dto.getUserid()).orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
 		Long count = likeRepository.countLikes(dto.getBoardid(), user.getId());
+		
 		return count;
 		
 	}
+	
+	public Long countboard(Long boardid) {
+		Long countNum = likeRepository.countBoard(boardid);
+		
+		return countNum;
+	}
+	
+	
 	@Transactional
 	public Long creatLike(LikeRequestDTO dto) {
 		Board board = boardRepository.findById(dto.getBoardid()).orElseThrow(()-> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
@@ -46,5 +56,8 @@ public class LikeService {
 		likeRepository.deleteById(likeId);
 		return likeId;
 	}
-	
+	@Transactional
+	public void deleteAllBoardLike(Long boardid) {
+		likeRepository.deleteAllByboard_Id(boardid);
+	}
 }

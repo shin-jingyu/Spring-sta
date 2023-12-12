@@ -24,4 +24,8 @@ public interface RippleRepository extends JpaRepository<Ripple, Long> {
 	@Modifying
 	@Query("DELETE FROM Ripple b WHERE b.user.id = :userId")
 	void deleteAllByUser_Id(@Param("userId") Long userId);
+	
+	@Modifying
+	@Query("DELETE FROM Ripple b WHERE b.board.boardid = :boardid")
+	void deleteAllByboard_Id(@Param("boardid") Long boardid);
 }

@@ -21,4 +21,12 @@ public interface LikeRepository extends JpaRepository<Likes, Long>{
 	@Query("SELECT likes_id FROM Likes l WHERE l.board.boardid= :boardid AND l.user.id = :id")
 	Long likeid(@Param("boardid") Long boardid, @Param("id") Long id);
 	
+	@Query("SELECT COUNT(l) FROM Likes l WHERE l.board.boardid = :boardid ")
+	Long countBoard(@Param("boardid") Long boardid);
+	
+	
+	
+	@Modifying
+	@Query("DELETE FROM Likes b WHERE b.board.boardid = :boardid")
+	void deleteAllByboard_Id(@Param("boardid") Long boardid);
 }

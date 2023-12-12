@@ -41,7 +41,7 @@ public class BoardService {
 
 	private final UserRepository userRepository;
 	private final BoardRepository boardRepository;
-	private final RippleRepository rippleRepository;
+
 	private final String mainUploadDirs = "C:/Spring/sta/src/main/resources/static/uploads/board/main";
 	private final String tempUploadDirs = "C:/Spring/sta/src/main/resources/static/uploads/board/temp";
 
@@ -50,7 +50,15 @@ public class BoardService {
 		List<Board> list = boardRepository.findAll(sort);
 		return list.stream().map(BoardResponseDTO::new).collect(Collectors.toList());
 	}
-
+	
+	public List<Board> myList(String userid){
+		User user = userRepository.findByUserid(userid)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+		List<Board> list = boardRepository.findBoardsByUserId(user.getId());
+		
+		return list;
+	};
+	
 	public List<String> boardDeleteImgSet(String userId) {
 		User user = userRepository.findByUserid(userId)
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -77,42 +85,7 @@ public class BoardService {
 		return imgs;
 	}
 	
-	@Transactional
-	public Long reppleSave(RippleRequestDTO rippleRequestDTO) {
-		Board board = boardRepository.findByBoardid(rippleRequestDTO.getBoardid())
-				.orElseThrow(() -> new EntityNotFoundException("게시물을 찾을 수 없습니다."));
-		User user = userRepository.findByUserid(rippleRequestDTO.getUserid())
-				.orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
-		rippleRequestDTO.setBoard(board);
-		rippleRequestDTO.setUser(user);
-		Ripple ripple = rippleRepository.save(rippleRequestDTO.toEntity());
-		return ripple.getRi_id();
-
-	}
-
-	public Page<Ripple> ripplefindBoardidPaged(Long boardid, Pageable pageable) {
-		return rippleRepository.findByBoard_Boardid(boardid, pageable);
-	}
-
-	@Transactional
-	public Long rippleupdate(RippleRequestDTO rippleRequestDTO) {
-		Ripple ripple = rippleRepository.findById(rippleRequestDTO.getRi_id())
-				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
-		ripple.rippleupdate(rippleRequestDTO.getRi_content());
-		return rippleRequestDTO.getRi_id();
-	}
-
-	@Transactional
-	public void rippledelete(Long ri_id) {
-		Ripple ripple = rippleRepository.findById(ri_id)
-				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글 입니다."));
-		rippleRepository.delete(ripple);
-	}
-	@Transactional
-	public void deleteAllRipple(String userId) {
-		userRepository.findByUserid(userId)
-        .ifPresent(user -> rippleRepository.deleteAllByUser_Id(user.getId()));
-	};
+	
 	@Transactional
 	public void deleteAllUserBoard(String userId) {
 		userRepository.findByUserid(userId)
@@ -203,11 +176,11 @@ public class BoardService {
 	}
 
 	@Transactional
-	public Long update(BoardRequestDto boardRequestDto) {
+	public String update(BoardRequestDto boardRequestDto) {
 		Board board = boardRepository.findById(boardRequestDto.getBoardid())
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 입니다."));
 		board.update(boardRequestDto.getContent());
-		return boardRequestDto.getBoardid();
+		return boardRequestDto.getContent();
 	}
 
 	@Transactional
