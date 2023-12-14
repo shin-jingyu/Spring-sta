@@ -42,6 +42,7 @@ public class BoardRestController {
 	private final BoardService boardService;
 	private final RippleService rippleService;
 	private final LikeService likeService ;
+	
 	@GetMapping
 	public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
 
@@ -132,5 +133,11 @@ public class BoardRestController {
 		boardService.deleteAllUserBoard(authentication.getName());
 		System.out.println("보드삭제 완료");
 		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<List<BoardResponseDTO>> searchList(@RequestParam  String keyword){
+		List<BoardResponseDTO> lists = boardService.keywords(keyword);
+		return ResponseEntity.ok(lists);
 	}
 }

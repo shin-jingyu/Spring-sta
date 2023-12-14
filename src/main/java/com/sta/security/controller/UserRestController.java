@@ -2,6 +2,7 @@ package com.sta.security.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sta.security.domain.JoinRequest;
 import com.sta.security.domain.User;
+import com.sta.security.domain.UserResponseDTO;
 import com.sta.security.domain.UserUpdateDTO;
 import com.sta.security.service.PrincipalDetailsService;
 import com.sta.security.service.UserService;
@@ -106,5 +109,10 @@ public class UserRestController {
 
 		return ResponseEntity.ok().build();
 	}
-
+	
+	@GetMapping("/userList")
+	public ResponseEntity<List<UserResponseDTO>> usersearch(@RequestParam String keyword){
+		List<UserResponseDTO> list = userService.usersearch(keyword);
+		return ResponseEntity.ok(list);
+	}
 }

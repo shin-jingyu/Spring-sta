@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import com.sta.board.domain.RippleRequestDTO;
 import com.sta.security.domain.JoinRequest;
 import com.sta.security.domain.LoginRequest;
 import com.sta.security.domain.User;
+import com.sta.security.domain.UserResponseDTO;
 import com.sta.security.domain.UserUpdateDTO;
 import com.sta.security.repository.UserRepository;
 
@@ -127,5 +130,11 @@ public class UserService {
 
 		Files.write(tempFilePath, file.getBytes());
 		return uniqueFileName;
+	}
+	
+	public List<UserResponseDTO> usersearch(String keyword){
+		List<User> userList = userRepository.findUsersByNicknameOrUserIdContaining(keyword);
+		List<UserResponseDTO> userRespons = userList.stream().map(UserResponseDTO ::new).collect(Collectors.toList());
+		return userRespons;
 	}
 }

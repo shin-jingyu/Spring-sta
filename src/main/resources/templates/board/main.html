@@ -33,7 +33,8 @@
 						<h4><i class="bi bi-house-door-fill"></i> Home</h4>
 					</a>
 					</br>
-					<a class="list-group-item" style="background-color: #f0f0f0;">
+					<a class="list-group-item" style="background-color: #f0f0f0;" data-bs-toggle="offcanvas"
+						data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
 						<h4><i class="bi bi-search"></i> 검색</h4>
 					</a>
 					</br>
@@ -74,6 +75,26 @@
 					</div>
 				</ul>
 			</div>
+
+
+			<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+				id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" style="width: 17%; margin-top: 5%;">
+				<div class="offcanvas-header shadow">
+					<h5 class="offcanvas-title" id="offcanvasScrollingLabel"><i class="bi bi-search"></i> search</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+				</div>
+				<div class="offcanvas-body">
+					<div class="input-group mb-3 shadow">
+						<input type="text" class="form-control" id="search-input"
+							aria-describedby="search-input-button">
+						<button class="btn btn-outline-secondary" type="button" id="search-input-button">검색</button>
+					</div>
+					<div id="user-search">
+
+					</div>
+				</div>
+			</div>
+
 		</div>
 
 
@@ -170,6 +191,499 @@
 		const userdelete = $('#userdelete');
 		const defaultImage = '/uploads/final/main.jpg';
 		const modal2 = $('#modal2');
+
+		$('#search-input-button').on('click', function () {
+			const userList = $('#user-search');
+			let searchinput = $('#search-input').val();
+			console.log(searchinput);
+
+			if (searchinput === "") {
+				alert("검색어를 입력해주세요")
+			} else {
+				userList.empty();
+				contentid.empty();
+				$.ajax({
+					url: apiURL + '/search?keyword=' + searchinput,
+					type: 'GET',
+					success: function (list) {
+						
+						contentid.append(`
+							<div class="container " style="background-color: white; width:1000px;" >
+								
+								<div class="row ">
+									<div class="col shadow">
+										<a style="font-size: 40px;"><i class="bi bi-search"></i>search" ${searchinput} "</a>		
+									</div>
+								</div>
+								
+								<div class="row" id="searchGrid" style="background-color: white;"> 
+									
+								</div>
+							  
+							</div>
+							
+							`);
+						const gridid = $('#searchGrid');
+						list.forEach(function (boardLists) {
+							const searchboardLists = [boardLists.boardimg1, boardLists.boardimg2, boardLists.boardimg3, boardLists.boardimg4, boardLists.boardimg5].filter(Boolean);
+							gridid.append(`
+								<div class="col-4 shadow" id="search-${boardLists.boardid}" data-bs-target="#search-modal-${boardLists.boardid}">
+									<img src="${boardLists.boardimg1}" class="img-thumbnail" style="width:300px ; height: 300px; margin-bottom: 20px; margin-top: 20px;">
+								</div>
+								<div class="modal" id="search-modal-${boardLists.boardid}" tabindex="-1">
+									<div class="modal-dialog modal-dialog-centered modal-xl">
+										<div class="modal-content">
+											
+											<div class="modal-header">
+												<h5 class="modal-title"><img src="${boardLists.img ? boardLists.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px;">${boardLists.nickname}</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											
+											<div class="modal-body">
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-md-7 ">
+															
+															<div class="row shadow">
+																
+																<div id="carousel-search-${boardLists.boardid}" class="carousel slide">
+																	
+																	<div class="carousel-inner">
+																		${searchboardLists.map((imageUrl, index) => `
+																		<div id="img-${index}" class="carousel-item ${index === 0 ? 'active' : ''}">
+																			<img src="${imageUrl}" class="d-block w-100" style="height: 600px;"
+																				alt="Image ${index + 1}">
+																		</div>
+																		`).join('')}
+																	</div>
+																	
+																	<button class="carousel-control-prev" type="button"
+																		data-bs-target="#carousel-search-${boardLists.boardid}" data-bs-slide="prev">
+																		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+																	</button>
+																	
+																	<button class="carousel-control-next" type="button"
+																		data-bs-target="#carousel-search-${boardLists.boardid}" data-bs-slide="next">
+																		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+																	</button>
+																
+																</div>
+																
+															</div>
+															
+															<div class="row shadow" style=" margin-bottom: 10px;margin-top: 10px;">
+																<div id="search-like-${boardLists.boardid}" style="font-size: 2em;"></div>
+																<div id="update-search-item-${boardLists.content}">
+																	<a style="font-size: 2em;">${boardLists.content}</a>																
+																</div>
+															</div>
+															
+														</div>
+														
+														<div class="col-md-5">
+															
+															<div class="row  text-end" >
+																
+																<div class="dropdown" style="margin-bottom:10px;" >
+																	${loggedInUserNickname === boardLists.nickname ? `
+																	<button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+																		•••
+																	</button>
+																	` : ''}
+																	<ul class="dropdown-menu dropdown-menu-dark">
+																		<li><a class="dropdown-item active" id="boatd-search-update-${boardLists.boardid}">수정</a></li>
+																		<li><a class="dropdown-item" id="boatd-search-delete-${boardLists.boardid}">삭제</a>
+																		</li>
+																	</ul>
+																	
+																</div>
+																
+															</div>
+															
+															<div class="row">
+																<div class="input-group mb-3 ">
+																	<input type="text" class="form-control shadow" id="ripple-search-input${boardLists.boardid}" ;
+																		aria-describedby="ripple-search-create${boardLists.boardid}">
+																	<button class="btn btn-outline-info shadow" type="button"
+																		id="ripple-search-create${boardLists.boardid}">댓글</button>
+																</div>
+															</div>
+															
+															<div class="row" id="search-ripple-${boardLists.boardid}">
+															</div>
+															
+														</div>
+														
+													</div>
+												</div>
+											</div>
+											
+										</div>
+										
+									</div>
+								</div>
+							`);
+							licks();
+							$(`#boatd-search-update-${boardLists.boardid}`).on('click', function () {
+								const updatesearch = $(`#update-search-item-${boardLists.content}`);
+								updatesearch.empty();
+								updatesearch.append(`
+								<div class="input-group mb-3" >
+									<input type="text" value="${boardLists.content}" class="form-control shadow" id="board-search-input${boardLists.boardid}"; aria-describedby="board-search-create${boardLists.boardid}">
+									<button class="btn btn-outline-info shadow" type="button" id="board-search-create${boardLists.boardid}">수정</button>
+								</div>
+								
+								`);
+								$(`#board-search-create${boardLists.boardid}`).on('click', function () {
+									let boardcontents = $(`#board-search-input${boardLists.boardid}`).val();
+									if (boardcontents == '' || null) {
+										alert("내용을 입력해주세요")
+									} else {
+										$.ajax({
+											url: apiURL + '/update',
+											type: 'POST',
+											contentType: 'application/json',
+											data: JSON.stringify({
+												content: boardcontents,
+												boardid: boardLists.boardid
+											}),
+											success: function (update) {
+
+												updatesearch.empty();
+												updatesearch.append(`
+										      <a style="font-size: 2em;">${update}</a>
+										    `);
+											},
+											error: function (error) {
+												console.error('Error during PATCH request:', error);
+											}
+										});
+									}
+
+								});
+							});
+							$(`#boatd-search-delete-${boardLists.boardid}`).on('click', function () {
+								if (confirm("삭제하시겠습니까?")) {
+									$.ajax({
+										url: apiURL + '/delete',
+										type: 'DELETE',
+										contentType: 'application/json',
+										data: JSON.stringify({
+											boardimgs: searchboardLists,
+											boardid: boardLists.boardid
+										}),
+										success: function () {
+
+											$(`#search-modal-${boardLists.boardid}`).modal('hide');
+											window.location.href = '/board';
+
+										},
+										error: function (error) {
+											console.error('Error during delete request:', error);
+										}
+									});
+
+								}
+							});
+
+							function licks() {
+								const lickid = $(`#search-like-${boardLists.boardid}`);
+								let requestData = {
+									boardid: `${boardLists.boardid}`
+								};
+
+								$.ajax({
+									url: '/api/like',
+									type: 'POST',
+									contentType: 'application/json',
+									data: JSON.stringify(requestData),
+									success: function (data) {
+
+										lickid.empty();
+										const boardIdAttr = (data.countcheck === 0) ? boardLists.boardid : `${boardLists.boardid}-fill`;
+										const iconClass = (data.countcheck === 0) ? 'bi bi-heart' : 'bi bi-heart-fill';
+										const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+										const likenum = $('<a></a>').text(data.countBoard);
+										lickid.append(icon);
+										lickid.append(likenum);
+									}
+								});
+
+								lickid.on('click', 'i', function () {
+									const boardId = $(this).data('boardid');
+
+
+									if (boardId == boardLists.boardid) {
+										$.ajax({
+											url: '/api/like/create',
+											type: 'POST',
+											contentType: 'application/json',
+											data: JSON.stringify(requestData),
+											success: function (data) {
+												lickid.empty();
+												const boardIdAttr = `${boardLists.boardid}-fill`;
+												const iconClass = 'bi bi-heart-fill';
+
+												const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+												const likenum = $('<a></a>').text(data);
+												lickid.append(icon);
+												lickid.append(likenum);
+
+											}
+										});
+
+									} else {
+										$.ajax({
+											url: '/api/like/delete',
+											type: 'POST',
+											contentType: 'application/json',
+											data: JSON.stringify(requestData),
+											success: function (data) {
+												lickid.empty();
+												const boardIdAttr = boardLists.boardid;
+												const iconClass = 'bi bi-heart';
+
+												const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+												const likenum = $('<a></a>').text(data);
+												lickid.append(icon);
+												lickid.append(likenum);
+											}
+										});
+
+									}
+
+								});
+							};
+							$(`#search-${boardLists.boardid}`).on('click', function () {
+								const searchRipple = $(`#search-ripple-${boardLists.boardid}`);
+								let Pagenum = 0;
+								searchRipple.empty();
+								searchPageRipple();
+								function searchPageRipple() {
+									
+									$.ajax({
+										url: apiURL + `/ripple?boardid=${boardLists.boardid}&page=${Pagenum}&size=10`,
+										type: 'GET',
+										success: function (lists) {
+											console.log(lists);
+											
+											lists.content.forEach(function (rippleLists) {
+												
+												searchRipple.append(`
+													<div class="container" style=" margin-bottom: 10px;" >
+													<div class="card " >
+														
+													 <div class="card-header" style="display: flex; align-items: center;">
+													    <h5 class="card-title" style="width:700px; align-items: center;""> 
+													        <img src="${rippleLists.img ? rippleLists.img : defaultImage}" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">${rippleLists.nickname}  •  ${rippleLists.timeDifferences}
+													    </h5>
+													    <div class="container text-end" >
+													        ${loggedInUserNickname === rippleLists.nickname ? `
+													        <button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+													            •••
+													        </button>` : ''}
+													        <ul class="dropdown-menu dropdown-menu-dark">
+													            <li><a class="dropdown-item active" id="ripple-search-update-${rippleLists.ri_id}">수정</a></li>
+													            <li><a class="dropdown-item" id="ripple-search-delete-${rippleLists.ri_id}">삭제</a></li>
+													        </ul>
+													    </div>
+													</div>
+															
+													  <div class="card-body">
+														<div class="card-text" id="text-${rippleLists.ri_id}">${rippleLists.ri_content}</div>
+													  </div>
+													</div>	
+													</div>													
+													
+													`);
+												if (rippleLists.totalPages > 1) {
+													const maxPagesToShow = 10;
+													const totalPages = rippleLists.totalPages;
+
+													const startPage = Math.floor((Pagenum) / maxPagesToShow) * maxPagesToShow + 1;
+													const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+													rippleid.append(`
+													  <nav aria-label="Page navigation example">
+											            <ul class="pagination">
+											                ${startPage === 1 ? '' : `<li class="page-item"><a class="page-link" aria-label="Previous" id="ripple-${rippleLists.boardid}-prev" data-page="${Pagenum - maxPagesToShow}"><span aria-hidden="true">&laquo;</span></a></li>`}
+											                
+											                ${Array.from({length: endPage - startPage + 1}, (_, index) => {
+														const pageNumber = startPage + index;
+														return `<li class="page-item"><a class="page-link" id="page-link-${rippleLists.boardid}-${pageNumber}" data-page="${pageNumber}">${pageNumber}</a></li>`;
+													}).join('')}
+											                
+											                ${endPage >= totalPages ? '' : `<li class="page-item"><a class="page-link" id="ripple-${rippleLists.boardid}-next" aria-label="Next" data-page="${Pagenum + maxPagesToShow}"><span aria-hidden="true">&raquo;</span></a></li>`}
+											            </ul>
+											        </nav>
+													`);
+
+
+
+													Array.from({length: endPage - startPage + 1}, (_, index) => {
+														const pageNumber = startPage + index;
+
+														$(`#page-link-${rippleLists.boardid}-${pageNumber}`).on('click', function () {
+
+															$.get(apiURL + `/ripple?boardid=${rippleLists.boardid}&page=${pageNumber - 1}&size=10`, function (dataList) {
+																Pagenum = pageNumber - 1;
+																searchRipple.empty();
+																searchPageRipple();
+															});
+														});
+
+													});
+													$(`#ripple-${rippleLists.boardid}-prev`).on('click', function () {
+														const newPage = Pagenum - maxPagesToShow < 0 ? 0 : Pagenum - maxPagesToShow;
+														$.get(apiURL + `/ripple?boardid=${rippleLists.boardid}&page=${newPage}&size=10`, function (dataList) {
+															Pagenum = newPage;
+															searchRipple.empty();
+															searchPageRipple();
+														});
+													});
+
+													$(`#ripple-${rippleLists.boardid}-next`).on('click', function () {
+														const newPage = startPage + maxPagesToShow;
+														$.get(apiURL + `/ripple?boardid=${rippleLists.boardid}&page=${newPage - 1}&size=10`, function (dataList) {
+															Pagenum = newPage - 1;
+
+															searchRipple.empty();
+															searchPageRipple();
+														});
+													});
+
+
+
+												};
+
+												$(`#ripple-search-update-${rippleLists.ri_id}`).on('click', function () {
+													const textUpdate = $(`#text-${rippleLists.ri_id}`);
+													textUpdate.empty();
+													textUpdate.append(`
+														<div class="input-group mb-3">
+															<input type="text" class="form-control" value="${rippleLists.ri_content}" id="ripple-search-input${rippleLists.ri_id}"; >
+															<button class="btn btn-outline-primary" type="button" id="update-search-ricontent-${rippleLists.ri_id}">수정</button>
+														</div>
+													`);
+													$(`#update-search-ricontent-${rippleLists.ri_id}`).on('click', function () {
+														let rippletext = $(`#ripple-search-input${rippleLists.ri_id}`).val();
+														if (rippletext == '' || null) {
+															alert("내용을 입력해주세요");
+														} else {
+															fetch(apiURL + '/rippleUpdate', {
+																method: 'POST',
+																headers: {
+																	'Content-Type': 'application/json',
+																},
+																body: JSON.stringify({
+																	ri_content: rippletext,
+																	ri_id: rippleLists.ri_id
+																}),
+
+															})
+
+																.then(() => {
+																	searchRipple.empty();
+																	searchPageRipple();
+																})
+																.catch(error => console.error('Error during PATCH request:', error));
+														}
+													});
+												});
+												$(`#ripple-search-delete-${rippleLists.ri_id}`).on('click', function () {
+													if (confirm("삭제하시겠습니까?")) {
+														fetch(apiURL + '/rippledelete', {
+															method: 'DELETE',
+															body: JSON.stringify({
+																ri_id: rippleLists.ri_id
+															}),
+															headers: {
+																'Content-Type': 'application/json',
+															},
+														})
+															.then(() => {
+																searchRipple.empty();
+																searchPageRipple();
+															})
+															.catch(error => console.error('Error during delete request:', error))
+
+													}
+												});
+											});
+
+										}
+									})
+									$(`#ripple-search-create${boardLists.boardid}`).on('click', function () {
+										const rippleinputSelector = `#ripple-search-input${boardLists.boardid}`;
+
+										let inputval = $(rippleinputSelector).val();
+										console.log(inputval);
+										if (inputval === '' || inputval === null) {
+											alert("내용을 입력해주세요")
+										} else {
+											$.ajax({
+												url: apiURL + '/ripple',
+												type: 'POST',
+												contentType: 'application/json',
+												data: JSON.stringify({
+													ri_content: inputval,
+													boardid: boardLists.boardid
+												}),
+												success: function () {
+													searchRipple.empty();
+													searchPageRipple();
+													$(rippleinputSelector).val('');
+												},
+												error: function (error) {
+													console.error('Error during ripple request:', error);
+												}
+											});
+										}
+									});
+
+								};
+								$(`#search-modal-${boardLists.boardid}`).modal('show');
+							});
+
+						});
+
+					},
+					error: function (error) {
+						console.error('Error during request:', error);
+					}
+
+				});
+				$.ajax({
+					url: '/security-login/userList?keyword=' + searchinput,
+					type: 'GET',
+					success: function (user) {
+						
+						user.forEach(function (list) {
+							userList.append(`
+							<div class="card" style="margin-top:10px;" >
+						      <div class="card-body">
+						        <h5 class="card-title"> <img src="${list.img ? list.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">	
+													${list.nickname}</h5>
+						        <p class="card-text">${list.text ? list.text : ""}</p>
+						      </div>
+						    </div>
+						`);
+						});
+
+
+					},
+					error: function (error) {
+						console.error('Error during request:', error);
+					}
+				});
+			}
+
+			$('#search-input').val('');
+		});
+
+
+
+
 
 		$(`#myPage`).on('click', function () {
 			mainboard.empty();
@@ -325,7 +839,7 @@
 										boardid: item.boardid
 									}),
 									success: function () {
-										
+
 										$(`#mypage-modal-${item.boardid}`).modal('hide');
 
 										updateBoardList();

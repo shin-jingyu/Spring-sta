@@ -189,4 +189,16 @@ public class BoardService {
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 입니다."));
 		boardRepository.delete(board);
 	}
+	
+	public List<BoardResponseDTO> keywords(String keyword){
+		
+		List<Board> keywordList = boardRepository.findBoardsByContentContaining(keyword);
+		
+		List<BoardResponseDTO> sortedKeywordList = keywordList.stream()
+                .sorted(Comparator.comparing(Board::getCreatedAt).reversed())
+                .map(BoardResponseDTO::new) 
+                .collect(Collectors.toList());
+		
+		return sortedKeywordList;
+	}
 }
