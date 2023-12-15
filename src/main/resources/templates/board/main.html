@@ -195,7 +195,7 @@
 		$('#search-input-button').on('click', function () {
 			const userList = $('#user-search');
 			let searchinput = $('#search-input').val();
-			console.log(searchinput);
+
 
 			if (searchinput === "") {
 				alert("검색어를 입력해주세요")
@@ -206,7 +206,7 @@
 					url: apiURL + '/search?keyword=' + searchinput,
 					type: 'GET',
 					success: function (list) {
-						
+
 						contentid.append(`
 							<div class="container " style="background-color: white; width:1000px;" >
 								
@@ -225,6 +225,7 @@
 							`);
 						const gridid = $('#searchGrid');
 						list.forEach(function (boardLists) {
+
 							const searchboardLists = [boardLists.boardimg1, boardLists.boardimg2, boardLists.boardimg3, boardLists.boardimg4, boardLists.boardimg5].filter(Boolean);
 							gridid.append(`
 								<div class="col-4 shadow" id="search-${boardLists.boardid}" data-bs-target="#search-modal-${boardLists.boardid}">
@@ -311,7 +312,8 @@
 															
 															<div class="row" id="search-ripple-${boardLists.boardid}">
 															</div>
-															
+															<div class="row" id="search-ripple-page-${boardLists.boardid}">
+															</div>
 														</div>
 														
 													</div>
@@ -324,6 +326,7 @@
 								</div>
 							`);
 							licks();
+
 							$(`#boatd-search-update-${boardLists.boardid}`).on('click', function () {
 								const updatesearch = $(`#update-search-item-${boardLists.content}`);
 								updatesearch.empty();
@@ -353,9 +356,6 @@
 												updatesearch.append(`
 										      <a style="font-size: 2em;">${update}</a>
 										    `);
-											},
-											error: function (error) {
-												console.error('Error during PATCH request:', error);
 											}
 										});
 									}
@@ -377,9 +377,6 @@
 											$(`#search-modal-${boardLists.boardid}`).modal('hide');
 											window.location.href = '/board';
 
-										},
-										error: function (error) {
-											console.error('Error during delete request:', error);
 										}
 									});
 
@@ -454,21 +451,24 @@
 
 								});
 							};
+
 							$(`#search-${boardLists.boardid}`).on('click', function () {
 								const searchRipple = $(`#search-ripple-${boardLists.boardid}`);
+								const pageingsid = $(`#search-ripple-page-${boardLists.boardid}`);
 								let Pagenum = 0;
-								searchRipple.empty();
+
 								searchPageRipple();
 								function searchPageRipple() {
-									
+									searchRipple.empty();
+									pageingsid.empty();
 									$.ajax({
-										url: apiURL + `/ripple?boardid=${boardLists.boardid}&page=${Pagenum}&size=10`,
+										url: apiURL + `/ripple?boardid=${boardLists.boardid}&page=${Pagenum}&size=5`,
 										type: 'GET',
 										success: function (lists) {
-											console.log(lists);
-											
+
+
 											lists.content.forEach(function (rippleLists) {
-												
+
 												searchRipple.append(`
 													<div class="container" style=" margin-bottom: 10px;" >
 													<div class="card " >
@@ -496,65 +496,7 @@
 													</div>													
 													
 													`);
-												if (rippleLists.totalPages > 1) {
-													const maxPagesToShow = 10;
-													const totalPages = rippleLists.totalPages;
 
-													const startPage = Math.floor((Pagenum) / maxPagesToShow) * maxPagesToShow + 1;
-													const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
-
-													rippleid.append(`
-													  <nav aria-label="Page navigation example">
-											            <ul class="pagination">
-											                ${startPage === 1 ? '' : `<li class="page-item"><a class="page-link" aria-label="Previous" id="ripple-${rippleLists.boardid}-prev" data-page="${Pagenum - maxPagesToShow}"><span aria-hidden="true">&laquo;</span></a></li>`}
-											                
-											                ${Array.from({length: endPage - startPage + 1}, (_, index) => {
-														const pageNumber = startPage + index;
-														return `<li class="page-item"><a class="page-link" id="page-link-${rippleLists.boardid}-${pageNumber}" data-page="${pageNumber}">${pageNumber}</a></li>`;
-													}).join('')}
-											                
-											                ${endPage >= totalPages ? '' : `<li class="page-item"><a class="page-link" id="ripple-${rippleLists.boardid}-next" aria-label="Next" data-page="${Pagenum + maxPagesToShow}"><span aria-hidden="true">&raquo;</span></a></li>`}
-											            </ul>
-											        </nav>
-													`);
-
-
-
-													Array.from({length: endPage - startPage + 1}, (_, index) => {
-														const pageNumber = startPage + index;
-
-														$(`#page-link-${rippleLists.boardid}-${pageNumber}`).on('click', function () {
-
-															$.get(apiURL + `/ripple?boardid=${rippleLists.boardid}&page=${pageNumber - 1}&size=10`, function (dataList) {
-																Pagenum = pageNumber - 1;
-																searchRipple.empty();
-																searchPageRipple();
-															});
-														});
-
-													});
-													$(`#ripple-${rippleLists.boardid}-prev`).on('click', function () {
-														const newPage = Pagenum - maxPagesToShow < 0 ? 0 : Pagenum - maxPagesToShow;
-														$.get(apiURL + `/ripple?boardid=${rippleLists.boardid}&page=${newPage}&size=10`, function (dataList) {
-															Pagenum = newPage;
-															searchRipple.empty();
-															searchPageRipple();
-														});
-													});
-
-													$(`#ripple-${rippleLists.boardid}-next`).on('click', function () {
-														const newPage = startPage + maxPagesToShow;
-														$.get(apiURL + `/ripple?boardid=${rippleLists.boardid}&page=${newPage - 1}&size=10`, function (dataList) {
-															Pagenum = newPage - 1;
-
-															searchRipple.empty();
-															searchPageRipple();
-														});
-													});
-
-
-
-												};
 
 												$(`#ripple-search-update-${rippleLists.ri_id}`).on('click', function () {
 													const textUpdate = $(`#text-${rippleLists.ri_id}`);
@@ -583,10 +525,10 @@
 															})
 
 																.then(() => {
-																	searchRipple.empty();
+
 																	searchPageRipple();
 																})
-																.catch(error => console.error('Error during PATCH request:', error));
+
 														}
 													});
 												});
@@ -602,54 +544,111 @@
 															},
 														})
 															.then(() => {
-																searchRipple.empty();
+
 																searchPageRipple();
 															})
-															.catch(error => console.error('Error during delete request:', error))
+
 
 													}
 												});
 											});
 
+											if (lists.totalPages > 1) {
+
+												const maxPagesToShow = 10;
+												const totalPages = lists.totalPages;
+
+												const startPage = Math.floor((Pagenum) / maxPagesToShow) * maxPagesToShow + 1;
+												const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+												pageingsid.append(`
+													  <nav aria-label="Page navigation example">
+											            <ul class="pagination justify-content-center">
+											                ${startPage === 1 ? '' : `<li class="page-item"><a class="page-link" aria-label="Previous" id="ripple-${boardLists.boardid}-prev" data-page="${Pagenum - maxPagesToShow}"><span aria-hidden="true">&laquo;</span></a></li>`}
+											                
+											                ${Array.from({length: endPage - startPage + 1}, (_, index) => {
+													const pageNumber = startPage + index;
+													return `<li class="page-item"><a class="page-link" id="page-link-${boardLists.boardid}-${pageNumber}" data-page="${pageNumber}">${pageNumber}</a></li>`;
+												}).join('')}
+											                
+											                ${endPage >= totalPages ? '' : `<li class="page-item"><a class="page-link" id="ripple-${boardLists.boardid}-next" aria-label="Next" data-page="${Pagenum + maxPagesToShow}"><span aria-hidden="true">&raquo;</span></a></li>`}
+											            </ul>
+											        </nav>
+													`);
+
+
+
+												Array.from({length: endPage - startPage + 1}, (_, index) => {
+													const pageNumber = startPage + index;
+
+													$(`#page-link-${boardLists.boardid}-${pageNumber}`).on('click', function () {
+
+														$.get(apiURL + `/ripple?boardid=${boardLists.boardid}&page=${pageNumber - 1}&size=5`, function (dataList) {
+															Pagenum = pageNumber - 1;
+
+															searchPageRipple();
+														});
+													});
+
+												});
+												$(`#ripple-${boardLists.boardid}-prev`).on('click', function () {
+													const newPage = Pagenum - maxPagesToShow < 0 ? 0 : Pagenum - maxPagesToShow;
+													$.get(apiURL + `/ripple?boardid=${boardLists.boardid}&page=${newPage}&size=5`, function (dataList) {
+														Pagenum = newPage;
+
+														searchPageRipple();
+													});
+												});
+
+												$(`#ripple-${boardLists.boardid}-next`).on('click', function () {
+													const newPage = startPage + maxPagesToShow;
+													$.get(apiURL + `/ripple?boardid=${boardLists.boardid}&page=${newPage - 1}&size=5`, function (dataList) {
+														Pagenum = newPage - 1;
+
+														searchPageRipple();
+													});
+												});
+
+
+
+											};
+
 										}
 									})
-									$(`#ripple-search-create${boardLists.boardid}`).on('click', function () {
-										const rippleinputSelector = `#ripple-search-input${boardLists.boardid}`;
 
-										let inputval = $(rippleinputSelector).val();
-										console.log(inputval);
-										if (inputval === '' || inputval === null) {
-											alert("내용을 입력해주세요")
-										} else {
-											$.ajax({
-												url: apiURL + '/ripple',
-												type: 'POST',
-												contentType: 'application/json',
-												data: JSON.stringify({
-													ri_content: inputval,
-													boardid: boardLists.boardid
-												}),
-												success: function () {
-													searchRipple.empty();
-													searchPageRipple();
-													$(rippleinputSelector).val('');
-												},
-												error: function (error) {
-													console.error('Error during ripple request:', error);
-												}
-											});
-										}
-									});
 
 								};
+
+								$(`#ripple-search-create${boardLists.boardid}`).on('click', function () {
+									const rippleinputSelector = `#ripple-search-input${boardLists.boardid}`;
+
+									let inputval = $(rippleinputSelector).val();
+
+									if (inputval === '' || inputval === null) {
+										alert("내용을 입력해주세요")
+									} else {
+										$.ajax({
+											url: apiURL + '/ripple',
+											type: 'POST',
+											contentType: 'application/json',
+											data: JSON.stringify({
+												ri_content: inputval,
+												boardid: boardLists.boardid
+											}),
+											success: function () {
+												searchPageRipple();
+												$(rippleinputSelector).val('');
+											}
+										});
+									}
+								});
+
+
 								$(`#search-modal-${boardLists.boardid}`).modal('show');
 							});
 
 						});
 
-					},
-					error: function (error) {
-						console.error('Error during request:', error);
 					}
 
 				});
@@ -657,7 +656,7 @@
 					url: '/security-login/userList?keyword=' + searchinput,
 					type: 'GET',
 					success: function (user) {
-						
+
 						user.forEach(function (list) {
 							userList.append(`
 							<div class="card" style="margin-top:10px;" >
@@ -671,9 +670,6 @@
 						});
 
 
-					},
-					error: function (error) {
-						console.error('Error during request:', error);
 					}
 				});
 			}
@@ -686,6 +682,7 @@
 
 
 		$(`#myPage`).on('click', function () {
+			let Pagenum = 0;
 			mainboard.empty();
 			$.get(apiURL + '/mypage', function (list) {
 
@@ -749,6 +746,8 @@
 													</div>	  
 												</div> 
 												<div class="row shadow" style=" margin-bottom: 10px;margin-top: 10px;" >  
+													<div id="update-my-${item.boardid}" style="font-size: 2em;">
+													</div>
 													<div id="update-my-item-${item.content}">
 													  <a style="font-size: 2em;">${item.content}</a>
 													</div> 
@@ -756,8 +755,8 @@
 											 </div>
       										 <div class="col-md-5 " >
 												 <div class="row">  
-												 	<div class="dropdown">
-														<button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+												 	<div class="dropdown text-end" style=" margin-bottom: 10px;">
+														<button class="btn btn-light " type="button" data-bs-toggle="dropdown" aria-expanded="false">
 							                                •••
 							                            </button>
 							                            
@@ -775,7 +774,8 @@
 												</div>
 												<div class="row" id="mypage-riple-${item.boardid}">
 												</div>
-											
+												<div id="mypage-riple-page-${item.boardid}">
+												</div>	
 
 											 
 											 
@@ -789,6 +789,76 @@
 				                </div>
 				            </div>
 				        `);
+				        licks();
+						function licks() {
+							const lickid = $(`#update-my-${item.boardid}`);
+							let requestData = {
+								boardid: `${item.boardid}`
+							};
+
+							$.ajax({
+								url: '/api/like',
+								type: 'POST',
+								contentType: 'application/json',
+								data: JSON.stringify(requestData),
+								success: function (data) {
+
+									lickid.empty();
+									const boardIdAttr = (data.countcheck === 0) ? item.boardid : `${item.boardid}-fill`;
+									const iconClass = (data.countcheck === 0) ? 'bi bi-heart' : 'bi bi-heart-fill';
+									const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+									const likenum = $('<a></a>').text(data.countBoard);
+									lickid.append(icon);
+									lickid.append(likenum);
+								}
+							});
+
+							lickid.on('click', 'i', function () {
+								const boardId = $(this).data('boardid');
+
+
+								if (boardId == item.boardid) {
+									$.ajax({
+										url: '/api/like/create',
+										type: 'POST',
+										contentType: 'application/json',
+										data: JSON.stringify(requestData),
+										success: function (data) {
+											lickid.empty();
+											const boardIdAttr = `${item.boardid}-fill`;
+											const iconClass = 'bi bi-heart-fill';
+
+											const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+											const likenum = $('<a></a>').text(data);
+											lickid.append(icon);
+											lickid.append(likenum);
+
+										}
+									});
+
+								} else {
+									$.ajax({
+										url: '/api/like/delete',
+										type: 'POST',
+										contentType: 'application/json',
+										data: JSON.stringify(requestData),
+										success: function (data) {
+											lickid.empty();
+											const boardIdAttr = item.boardid;
+											const iconClass = 'bi bi-heart';
+
+											const icon = $('<i></i>').addClass(iconClass).attr('data-boardid', boardIdAttr);
+											const likenum = $('<a></a>').text(data);
+											lickid.append(icon);
+											lickid.append(likenum);
+										}
+									});
+
+								}
+
+							});
+						};
+
 						const mypageriple = $(`#mypage-riple-${item.boardid}`);
 						$(`#boatd-my-update-${item.boardid}`).on('click', function () {
 							const contentmy = $(`#update-my-item-${item.content}`);
@@ -818,9 +888,6 @@
 											contentmy.append(`
 										      <a style="font-size: 2em;">${update}</a>
 										    `);
-										},
-										error: function (error) {
-											console.error('Error during PATCH request:', error);
 										}
 									});
 								}
@@ -843,9 +910,6 @@
 										$(`#mypage-modal-${item.boardid}`).modal('hide');
 
 										updateBoardList();
-									},
-									error: function (error) {
-										console.error('Error during delete request:', error);
 									}
 								});
 
@@ -879,7 +943,7 @@
 										mypageriple.empty();
 										myPageRipple();
 									})
-									.catch(error => console.error('Error during ripple request:', error));
+
 							}
 						});
 
@@ -888,9 +952,7 @@
 						myPageRipple();
 
 						function myPageRipple() {
-
-							let Pagenum = 0;
-							$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${Pagenum}&size=10`, function (dataList) {
+							$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${Pagenum}&size=5`, function (dataList) {
 
 
 								dataList.content.forEach(data => {
@@ -963,7 +1025,7 @@
 														myPageRipple();
 
 													})
-													.catch(error => console.error('Error during PATCH request:', error));
+
 											}
 										});
 									})
@@ -986,23 +1048,26 @@
 													mypageriple.empty();
 													myPageRipple();
 												})
-												.catch(error => console.error('Error during delete request:', error))
+
 
 										}
 
 									});
 								});
 
+
 								if (dataList.totalPages > 1) {
+									const mypageing = $(`#mypage-riple-page-${item.boardid}`);
 									const maxPagesToShow = 10;
-									const totalPages = dataList.totalPages;
+									let totalPages = dataList.totalPages;
 
-									const startPage = Math.floor((Pagenum) / maxPagesToShow) * maxPagesToShow + 1;
-									const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
 
-									rippleid.append(`
-									  <nav aria-label="Page navigation example">
-							            <ul class="pagination">
+									let startPage = Math.floor((Pagenum) / maxPagesToShow) * maxPagesToShow + 1;
+									let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+									mypageing.append(`
+									  <nav aria-label="Page navigation example " style="margin-top: 10px; ">
+							            <ul class="pagination justify-content-center">
 							                ${startPage === 1 ? '' : `<li class="page-item"><a class="page-link" aria-label="Previous" id="ripple-${item.boardid}-prev" data-page="${Pagenum - maxPagesToShow}"><span aria-hidden="true">&laquo;</span></a></li>`}
 							                
 							                ${Array.from({length: endPage - startPage + 1}, (_, index) => {
@@ -1012,7 +1077,7 @@
 							                
 							                ${endPage >= totalPages ? '' : `<li class="page-item"><a class="page-link" id="ripple-${item.boardid}-next" aria-label="Next" data-page="${Pagenum + maxPagesToShow}"><span aria-hidden="true">&raquo;</span></a></li>`}
 							            </ul>
-							        </nav>
+							         </nav>
 									`);
 
 
@@ -1022,9 +1087,10 @@
 
 										$(`#page-link-${item.boardid}-${pageNumber}`).on('click', function () {
 
-											$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${pageNumber - 1}&size=10`, function (dataList) {
+											$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${pageNumber - 1}&size=5`, function (dataList) {
 												Pagenum = pageNumber - 1;
 												mypageriple.empty();
+												mypageing.empty();
 												myPageRipple();
 											});
 										});
@@ -1032,19 +1098,21 @@
 									});
 									$(`#ripple-${item.boardid}-prev`).on('click', function () {
 										const newPage = Pagenum - maxPagesToShow < 0 ? 0 : Pagenum - maxPagesToShow;
-										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage}&size=10`, function (dataList) {
+										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage}&size=5`, function (dataList) {
 											Pagenum = newPage;
 											mypageriple.empty();
+											mypageing.empty();
 											myPageRipple();
 										});
 									});
 
 									$(`#ripple-${item.boardid}-next`).on('click', function () {
 										const newPage = startPage + maxPagesToShow;
-										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage - 1}&size=10`, function (dataList) {
+										$.get(apiURL + `/ripple?boardid=${item.boardid}&page=${newPage - 1}&size=5`, function (dataList) {
 											Pagenum = newPage - 1;
 
 											mypageriple.empty();
+											mypageing.empty();
 											myPageRipple();
 										});
 									});
@@ -1488,7 +1556,7 @@
 
 									updateBoardList();
 								})
-								.catch(error => console.error('Error during ripple request:', error));
+
 						}
 					});
 					function ripplelists() {
@@ -1576,7 +1644,7 @@
 												ripple.empty();
 												ripplelists();
 											})
-											.catch(error => console.error('Error during PATCH request:', error));
+
 									}
 								});
 								$(`#ripple-deletes-${data.ri_id}`).on('click', function () {
@@ -1594,7 +1662,7 @@
 												ripple.empty();
 												ripplelists();
 											})
-											.catch(error => console.error('Error during delete request:', error))
+
 
 									}
 
@@ -1702,7 +1770,7 @@
 														rippleid.empty();
 														ripplelist();
 													})
-													.catch(error => console.error('Error during PATCH request:', error));
+
 											}
 
 
@@ -1726,7 +1794,7 @@
 														rippleid.empty();
 														ripplelist();
 													})
-													.catch(error => console.error('Error during delete request:', error))
+
 
 											}
 
@@ -1826,7 +1894,7 @@
 									$(`#update-${item.boardid}`).modal('hide');
 									updateBoardList();
 								})
-								.catch(error => console.error('Error during PATCH request:', error));
+
 						}
 
 
@@ -1939,9 +2007,6 @@
 						let boardsimg = $('#boardimg' + (i + 1));
 						boardsimg.val(uniqueFileNames[i]);
 					}
-				},
-				error: function (xhr, status, error) {
-					console.error(error);
 				}
 			});
 
