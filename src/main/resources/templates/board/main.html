@@ -48,6 +48,12 @@
 						</h4>
 					</a>
 					</br>
+
+					<a class="list-group-item" style="background-color: #f0f0f0;" type="button" data-bs-toggle="modal"
+						data-bs-target="#Modal" data-bs-whatever="@mdo">
+						<h4><i class="bi bi-plus-square"></i> 글작성 </h4>
+					</a>
+					</br>
 					<div class="dropdown">
 						<a class="list-group-item " type="button" data-bs-toggle="dropdown" aria-expanded="false"
 							style="background-color: #f0f0f0;">
@@ -64,10 +70,7 @@
 							<li><a class="dropdown-item" id="userdelete">
 									<h5><i class="bi bi-person-bounding-box"></i> 회원탈퇴</h5>
 								</a></li>
-							<li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#Modal"
-									data-bs-whatever="@mdo">
-									<h5><i class="bi bi-plus-square"></i>글작성</h5>
-								</a></li>
+
 						</ul>
 
 
@@ -99,65 +102,90 @@
 
 
 		<div class="content" id="contentid">
+			<div class="container">
+				<div class="row">
+					<div class="col-8">
 
-			<div id="mainboard" class="container">
 
-			</div>
+						<div id="mainboard" class="container">
 
-
-			<!-- 글작성 모달 -->
-			<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="ModalLabel">글작성</h1>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 
-						<div class="modal-body">
-							<div class="mb-3">
-								<label for="content" class="col-form-label">사진:</label>
-								<input id="boardfile" type="file" multiple>
-								<div id="carouselExampleIndicators" class="carousel slide">
-									<div id="carousel-inner" class="carousel-inner">
-										<div id="imgdiv" class="carousel-item active" hidden>
-											<img id="imagePreview1" class="d-block w-100" style="height: 300px; "
-												src="">
-											<input type="hidden" id="boardimg1" name="boardimg1" value="">
+
+						<!-- 글작성 모달 -->
+						<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel"
+							aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h1 class="modal-title fs-5" id="ModalLabel">글작성</h1>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
+									</div>
+
+									<div class="modal-body">
+										<div class="mb-3">
+											<label for="content" class="col-form-label">사진:</label>
+											<input id="boardfile" type="file" multiple>
+											<div id="carouselExampleIndicators" class="carousel slide">
+												<div id="carousel-inner" class="carousel-inner">
+													<div id="imgdiv" class="carousel-item active" hidden>
+														<img id="imagePreview1" class="d-block w-100"
+															style="height: 300px; " src="">
+														<input type="hidden" id="boardimg1" name="boardimg1" value="">
+													</div>
+
+												</div>
+
+
+												<button class="carousel-control-prev" type="button"
+													data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+													<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+													<span class="visually-hidden">Previous</span>
+												</button>
+												<button class="carousel-control-next" type="button"
+													data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+													<span class="carousel-control-next-icon" ariahidden="true"></span>
+													<span class="visually-hidden">Next</span>
+												</button>
+											</div>
+
+										</div>
+
+										<div class="mb-3">
+											<label for="content" class="col-form-label">내용:</label>
+											<textarea class="form-control" id="content" required></textarea>
 										</div>
 
 									</div>
 
 
-									<button class="carousel-control-prev" type="button"
-										data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-										<span class="visually-hidden">Previous</span>
-									</button>
-									<button class="carousel-control-next" type="button"
-										data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-										<span class="carousel-control-next-icon" ariahidden="true"></span>
-										<span class="visually-hidden">Next</span>
-									</button>
+									<div class="modal-footer">
+										<button type="button" id="createButton" class="btn btn-primary">업로드</button>
+									</div>
 								</div>
-
 							</div>
-
-							<div class="mb-3">
-								<label for="content" class="col-form-label">내용:</label>
-								<textarea class="form-control" id="content" required></textarea>
-							</div>
-
 						</div>
 
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col">
+								<div class="card">
+									<div class="card-header">
+										회원님을 위한 추천
+									</div>
+									<div class="card-body " id="friend">
 
-						<div class="modal-footer">
-							<button type="button" id="createButton" class="btn btn-primary">업로드</button>
+
+
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
 
 
 		</div>
@@ -185,13 +213,93 @@
 		const mainboard = $('#mainboard');
 		const createModal = $('#Modal'); // 글 작성 모달
 		let loggedInUserNickname = /*[[${nickname}]]*/'';
+		let loggedInUserid = /*[[${id}]]*/'';
+		let loginUser = /*[[${loginUser}]]*/'';
 		const imageInput = $('#boardfile');
 		const boardupdatemodal = $('#boardupdatemodal');
 		const contentid = $('#contentid');
 		const userdelete = $('#userdelete');
 		const defaultImage = '/uploads/final/main.jpg';
 		const modal2 = $('#modal2');
+		const friend = $('#friend');
 
+		recommend();
+		function recommend() {
+			$.ajax({
+				url: '/security-login/userListAll',
+				type: 'GET',
+				contentType: 'application/json',
+
+				success: function (userList) {
+					friend.empty();
+					const limit = 5; // 원하는 반복 횟수 설정
+					for (let i = 0; i < Math.min(limit, userList.length); i++) {
+						const userAll = userList[i];
+
+						friend.append(`
+				            <div id="row-follow-${userAll.id}" class="row shadow-sm m-4 d-flex align-items-center justify-content-center">
+				                <div class="col-3">
+				                    <img src="${userAll.img ? userAll.img : defaultImage}" style="width:45px; height:45px; border-radius:50%; margin-right:10px;">
+				                </div>
+				                <div class="col-6">
+				                    <h5 class="card-title">${userAll.nickname}</h5>
+				                    <h6 class="card-subtitle mb-2 text-body-secondary">${userAll.text ? userAll.text : ''}</h6>
+				                </div>
+				                <div class="col-3" id="follow-${userAll.id}">
+				                    
+				                </div>
+				            </div>
+				        `);
+						const userfollow = $(`#follow-${userAll.id}`);
+						const rowfollow = $(`#row-follow-${userAll.id}`);
+						if (loginUser.userid === userAll.userid) {
+							rowfollow.empty();
+						} else {
+
+							$.ajax({
+								url: `/api/follow?myid=${loggedInUserid}&youid=${userAll.id}`,
+								type: 'GET',
+								success: function (follow) {
+									if (follow == 2) {
+										rowfollow.empty();
+									} else if (follow == 1) {
+										rowfollow.empty();
+									} else {
+										userfollow.append(`<p class="mb-0" id="follow-click-${userAll.id}"><a  class="link-primary align-items-center d-flex">팔로우</a></p>`);
+									}
+									$(`#follow-click-${userAll.id}`).on('click', function () {
+										
+										$.ajax({
+											url: '/api/follow',
+											type: 'POST',
+											contentType: 'application/json',
+											data: JSON.stringify({
+												myid: loggedInUserid,
+												youid: userAll.id,
+												my_userid: loginUser.userid,
+												you_userid: userAll.userid
+											}),
+											success: function (follow) {
+													recommend();
+
+											}
+										});
+									});
+								}
+							});
+						}
+
+
+
+
+
+					}
+
+
+
+				}
+			});
+		}
 		$('#search-input-button').on('click', function () {
 			const userList = $('#user-search');
 			let searchinput = $('#search-input').val();
@@ -656,7 +764,12 @@
 					url: '/security-login/userList?keyword=' + searchinput,
 					type: 'GET',
 					success: function (user) {
-
+						console.log(user);
+						userList.append(`
+							<div class="container" style="margin-bottom: 10px; margin-top: 10px;">
+							<h5 class="text-center" style="font-size: 20px;"><i class="bi bi-search"></i> search " ${searchinput} "</h5>		
+							</div>
+						`);
 						user.forEach(function (list) {
 							userList.append(`
 							<div class="card" style="margin-top:10px;" >
@@ -689,11 +802,17 @@
 				mainboard.append(`
 		        <div class="container " style=" background-color: white;">
 		            <div class="row shadow">
-		                <div class="col" >
+		                <div class="col-6" >
 							<img src="${list[0].user.img ? list[0].user.img : defaultImage}" class="img-thumbnail" 
 							style="width:100px ; height: 100px; margin-right: 10px; ">
 		                    <a style="font-size: 2.5em;">${list[0].user.nickname}</a>
-		                </div>	
+		                </div>
+		                <div class="col-2" >
+						</div>
+						<div class="col-2" >
+						</div>
+						<div class="col-2" >
+						</div>	 	
 		            </div>	
 		            <div class="row" id="dynamicRows">
 					</div>	 
@@ -789,7 +908,7 @@
 				                </div>
 				            </div>
 				        `);
-				        licks();
+						licks();
 						function licks() {
 							const lickid = $(`#update-my-${item.boardid}`);
 							let requestData = {

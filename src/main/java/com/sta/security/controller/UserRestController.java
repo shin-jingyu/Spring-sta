@@ -115,4 +115,10 @@ public class UserRestController {
 		List<UserResponseDTO> list = userService.usersearch(keyword);
 		return ResponseEntity.ok(list);
 	}
+	
+	@GetMapping("/userListAll")
+	public ResponseEntity<List<UserResponseDTO>> userListAll(){
+		List<UserResponseDTO> list = userService.userListAll();
+		 return ResponseEntity.ok(list);
+	}
 }

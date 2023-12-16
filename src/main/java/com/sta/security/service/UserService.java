@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -136,5 +137,12 @@ public class UserService {
 		List<User> userList = userRepository.findUsersByNicknameOrUserIdContaining(keyword);
 		List<UserResponseDTO> userRespons = userList.stream().map(UserResponseDTO ::new).collect(Collectors.toList());
 		return userRespons;
+	}
+	
+	public List<UserResponseDTO> userListAll(){
+		List<User> userList = userRepository.findAll();
+		Collections.shuffle(userList);
+		List<UserResponseDTO> userListAlls = userList.stream().map(UserResponseDTO ::new).collect(Collectors.toList());
+		return userListAlls;
 	}
 }

@@ -26,6 +26,8 @@ public class BoardController {
 				
 				model.addAttribute("nickname", loginUser.getNickname());
 				model.addAttribute("img",loginUser.getImg());
+				model.addAttribute("id",loginUser.getId());
+				model.addAttribute("loginUser",loginUser);
 			}
 		}
 		return "board/main";
