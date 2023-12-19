@@ -27,5 +27,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	@Query("SELECT b FROM Board b WHERE b.content LIKE %:keyword%")
 	List<Board> findBoardsByContentContaining(@Param("keyword") String keyword);
 
-
+	@Query("SELECT COUNT(b) FROM Board b WHERE b.user.id = :id  ")
+	Long countBoardId(@Param("id") Long id);
 }

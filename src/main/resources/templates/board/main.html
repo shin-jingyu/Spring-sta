@@ -268,7 +268,7 @@
 										userfollow.append(`<p class="mb-0" id="follow-click-${userAll.id}"><a  class="link-primary align-items-center d-flex">팔로우</a></p>`);
 									}
 									$(`#follow-click-${userAll.id}`).on('click', function () {
-										
+
 										$.ajax({
 											url: '/api/follow',
 											type: 'POST',
@@ -280,7 +280,7 @@
 												you_userid: userAll.userid
 											}),
 											success: function (follow) {
-													recommend();
+												recommend();
 
 											}
 										});
@@ -764,7 +764,7 @@
 					url: '/security-login/userList?keyword=' + searchinput,
 					type: 'GET',
 					success: function (user) {
-						console.log(user);
+
 						userList.append(`
 							<div class="container" style="margin-bottom: 10px; margin-top: 10px;">
 							<h5 class="text-center" style="font-size: 20px;"><i class="bi bi-search"></i> search " ${searchinput} "</h5>		
@@ -797,28 +797,256 @@
 		$(`#myPage`).on('click', function () {
 			let Pagenum = 0;
 			mainboard.empty();
-			$.get(apiURL + '/mypage', function (list) {
 
-				mainboard.append(`
-		        <div class="container " style=" background-color: white;">
-		            <div class="row shadow">
-		                <div class="col-6" >
-							<img src="${list[0].user.img ? list[0].user.img : defaultImage}" class="img-thumbnail" 
-							style="width:100px ; height: 100px; margin-right: 10px; ">
-		                    <a style="font-size: 2.5em;">${list[0].user.nickname}</a>
-		                </div>
-		                <div class="col-2" >
-						</div>
-						<div class="col-2" >
-						</div>
-						<div class="col-2" >
-						</div>	 	
-		            </div>	
-		            <div class="row" id="dynamicRows">
-					</div>	 
-		        </div>
-		    `);
-				let dynamicRows = $('#dynamicRows');
+
+			mainboard.append(`
+			        <div class="container " style=" background-color: white;">
+			            <div class="row shadow align-items-center justify-content-center">
+			                <div class="col-6" >
+								<img src="${loginUser.img ? loginUser.img : defaultImage}" class="img-thumbnail" 
+								style="width:100px ; height: 100px; margin-right: 10px; ">
+			                    <a style="font-size: 2.5em;">${loginUser.nickname}</a>
+			                </div>
+			                <div class="col-2" id="boardCount">
+							</div>
+							
+							<div class="col-2" data-bs-toggle="modal" data-bs-target="#followerCountModal">
+								
+								<div class="modal fade" id="followerCountModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+								  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								    <div class="modal-content">
+									<div class="modal-header">
+								        	<h1 class="modal-title fs-5" id="exampleModalToggleLabel">팔로워</h1>
+								        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body" id="followerCountModal-body">
+								        	
+									</div>
+								    </div>
+								  </div>
+								</div>
+								
+								<div id="followerCount" >
+								</div>	
+							</div>
+							
+							<div class="col-2" data-bs-toggle="modal" data-bs-target="#followCountModal">
+								
+								<div class="modal fade" id="followCountModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+								  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								    <div class="modal-content">
+									<div class="modal-header">
+								        	<h1 class="modal-title fs-5" id="exampleModalToggleLabel">팔로우</h1>
+								        	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body"id="followCountModal-body">
+								        	
+									</div>
+								    </div>
+								  </div>
+								</div>
+								
+								
+								<div id="followCount" >
+								</div>	
+							</div>	 	
+			            </div>	
+			            <div class="row" id="dynamicRows">
+						</div>	 
+			        </div>
+			    `);
+
+			const boardCount = $('#boardCount');
+			const followerCount = $('#followerCount');
+			const followCount = $('#followCount');
+			const followbody = $('#followCountModal-body');
+			const followerbody = $('#followerCountModal-body');
+			followCounsts();
+			function followCounsts() {
+				$.ajax({
+					url: `/api/follow/count?myid=${loginUser.id}`,
+					type: 'GET',
+					success: function (follow) {
+						followerCount.empty();
+						followCount.empty();
+						followerCount.append(`<h5 >팔로워 ${follow.youidCount}</h5>`);
+						followCount.append(`<h5 >팔로우 ${follow.myidCount}</h5>`);
+					}
+				});
+
+				$.ajax({
+					url: `/api/board/count?id=${loginUser.id}`,
+					type: 'GET',
+					success: function (boardcount) {
+						boardCount.empty();
+						boardCount.append(`<h5 >게시물 ${boardcount}</h5>`);
+					}
+				});
+			};
+			followerCount.on('click', function () {
+				followers();
+
+				function followers() {
+					$.ajax({
+						url: `/api/follow/followList?myid=${loginUser.id}`,
+						type: 'GET',
+						success: function (followList) {
+							followerbody.empty();
+							followList.youidList.forEach(function (youidList) {
+
+
+								console.log(youidList);
+
+								followerbody.append(`
+									<div class="container text-center">
+										<div id="row-follow-${youidList.user.id}" class="row shadow-sm m-4 d-flex align-items-center justify-content-center">
+											<div class="col-3">
+												<img src="${youidList.user.img ? youidList.user.img : defaultImage}" style="width:45px; height:45px; border-radius:50%; margin-right:10px;">
+											</div>
+											<div class="col-6">
+												<h5 class="card-title">${youidList.user.nickname}</h5>
+												<h6 class="card-subtitle mb-2 text-body-secondary">${youidList.user.text ? youidList.user.text : ''}</h6>
+											</div>
+											<div class="col-3" id="follow-${youidList.user.id}">
+											</div>
+										</div>
+									</div>
+									`);
+								$.ajax({
+									url: `/api/follow?myid=${loginUser.id}&&youid=${youidList.myid}`,
+									type: 'GET',
+									success: function (follower) {
+										console.log(follower);
+										if (follower === 2) {
+											$(`#follow-${youidList.user.id}`).empty();
+											$(`#follow-${youidList.user.id}`).append(`
+												<p class="mb-0" id="follower-click-${youidList.follow_id}"><a  class="link-primary align-items-center d-flex">친구</a></p>
+											`);
+										} else if (follower === 0) {
+											$(`#follow-${youidList.user.id}`).empty();
+											$(`#follow-${youidList.user.id}`).append(`
+												<p class="mb-0" id="follower-click-${youidList.follow_id}"><a  class="link-primary align-items-center d-flex">팔로우</a></p>
+											`);
+										}
+										$(`#follower-click-${youidList.follow_id}`).on('click', function () {
+
+											if (follower === 2) {
+												$.ajax({
+													url: `/api/follow/delete`,
+													type: 'POST',
+													contentType: 'application/json',
+													data: JSON.stringify({
+														myid: loginUser.id,
+														youid: youidList.myid
+													}),
+													success: function () {
+
+														followers();
+													}
+												});
+											} else if (follower === 0) {
+												$.ajax({
+													url: `/api/follow`,
+													type: 'POST',
+													contentType: 'application/json',
+													data: JSON.stringify({
+														myid: loginUser.id,
+														youid: youidList.myid,
+														my_userid: youidList.you_userid,
+														you_userid: youidList.my_userid
+													}),
+													success: function () {
+														followers();
+													}
+												});
+											};
+
+
+
+										});
+
+									}
+								});
+							});
+
+						}
+					});
+
+
+
+				};
+			});
+			followCount.on('click', function () {
+				follows();
+				function follows() {
+					$.ajax({
+						url: `/api/follow/followList?myid=${loginUser.id}`,
+						type: 'GET',
+						success: function (followList) {
+							followbody.empty();
+							followList.myidList.forEach(function (myidList) {
+
+								followbody.append(`
+								<div class="container text-center">
+									<div id="row-follow-${myidList.user.id}" class="row shadow-sm m-4 d-flex align-items-center justify-content-center">
+										<div class="col-3">
+											<img src="${myidList.user.img ? myidList.user.img : defaultImage}" style="width:45px; height:45px; border-radius:50%; margin-right:10px;">
+										</div>
+										<div class="col-6">
+											<h5 class="card-title">${myidList.user.nickname}</h5>
+											<h6 class="card-subtitle mb-2 text-body-secondary">${myidList.user.text ? myidList.user.text : ''}</h6>
+										</div>
+										<div class="col-3" id="follow-check-${myidList.follow_id}">
+										</div>
+									</div>
+								</div>
+								`);
+								$.ajax({
+									url: `/api/follow?myid=${loginUser.id}&&youid=${myidList.youid}`,
+									type: 'GET',
+									success: function (follow) {
+
+										if (follow === 2) {
+											$(`#follow-check-${myidList.follow_id}`).empty();
+											$(`#follow-check-${myidList.follow_id}`).append(`
+												<p class="mb-0" id="follow-click-${myidList.follow_id}"><a  class="link-primary align-items-center d-flex">친구</a></p>
+											`);
+										} else if (follow === 1) {
+											$(`#follow-check-${myidList.follow_id}`).empty();
+											$(`#follow-check-${myidList.follow_id}`).append(`
+												<p class="mb-0" id="follow-click-${myidList.follow_id}"><a  class="link-primary align-items-center d-flex">팔로잉</a></p>
+											`);
+										}
+										$(`#follow-click-${myidList.follow_id}`).on('click', function () {
+											$.ajax({
+												url: `/api/follow/delete `,
+												type: 'POST',
+												contentType: 'application/json',
+												data: JSON.stringify({
+													myid: loginUser.id,
+													youid: myidList.youid
+												}),
+												success: function () {
+													follows();
+													followCounsts();
+												}
+											});
+
+										});
+
+									}
+								});
+							});
+						}
+					});
+
+				};
+			});
+
+
+
+			let dynamicRows = $('#dynamicRows');
+			$.get(apiURL + '/mypage', function (list) {
 				list.forEach(function (item) {
 					const myPageImageUrl = [item.boardimg1, item.boardimg2, item.boardimg3, item.boardimg4, item.boardimg5].filter(Boolean);
 

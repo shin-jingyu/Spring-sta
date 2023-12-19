@@ -201,4 +201,11 @@ public class BoardService {
 		
 		return sortedKeywordList;
 	}
+	
+	public Long countBoard(Long id) {
+	
+		Long boardId = boardRepository.countBoardId(id);
+		
+		return boardId;
+	}
 }

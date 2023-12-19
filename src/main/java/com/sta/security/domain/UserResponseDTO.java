@@ -14,7 +14,7 @@ public class UserResponseDTO {
 	private String nickname;
 	private String text;
 	private String img;
-	
+
 	@Builder
 	public UserResponseDTO(User user) {
 		this.id = user.getId();

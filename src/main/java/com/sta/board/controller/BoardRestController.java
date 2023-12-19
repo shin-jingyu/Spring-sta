@@ -140,4 +140,11 @@ public class BoardRestController {
 		List<BoardResponseDTO> lists = boardService.keywords(keyword);
 		return ResponseEntity.ok(lists);
 	}
+	
+	@GetMapping("/count")
+	public ResponseEntity<Long> countBoard(@RequestParam Long id){
+		Long boardCount = boardService.countBoard(id);
+	
+		return ResponseEntity.ok(boardCount);
+	}
 }

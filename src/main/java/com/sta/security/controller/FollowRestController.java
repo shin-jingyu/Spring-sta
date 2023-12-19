@@ -1,5 +1,10 @@
 package com.sta.security.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +31,29 @@ public class FollowRestController {
 	@GetMapping
 	public ResponseEntity<Long> checkFollowId(@RequestParam Long myid, @RequestParam Long youid){
 		Long checkFollows = followService.checkFollow(myid,youid);
-		System.out.println(checkFollows);
+		
 		return ResponseEntity.ok(checkFollows);
+	}
+	@GetMapping("/count")
+	public ResponseEntity<Map<String, Long>> count(@RequestParam Long myid){
+		Long myidCount = followService.countFollowMyid(myid);
+		Long youidCount = followService.countFollowYouid(myid);
+		Map<String, Long> counts = new HashMap<>();
+		counts.put("myidCount", myidCount);
+		counts.put("youidCount", youidCount);
+		
+		return ResponseEntity.ok(counts);
+	}
+	@GetMapping("/followList")
+	public ResponseEntity<Map<String, List<FollowResponseDTO>>> followList(@RequestParam Long myid){
+		List<FollowResponseDTO> follower = followService.followerList(myid);
+		List<FollowResponseDTO> follow= followService.followList(myid);
+		
+		Map<String, List<FollowResponseDTO>> resultMap  = new HashMap<>();
+		resultMap .put("myidList", follow);
+		resultMap .put("youidList", follower);
+		
+		return ResponseEntity.ok(resultMap );
 	}
 	
 	@PostMapping
@@ -38,8 +64,8 @@ public class FollowRestController {
 	
 	@PostMapping("/delete")
 	public ResponseEntity<?> delete(@RequestBody FollowRequestDTO dto){
-		followService.delete(dto);
-		return ResponseEntity.ok().build();
+		int delete= followService.delete(dto);
+		return ResponseEntity.ok(delete);
 	}
 	
 }
