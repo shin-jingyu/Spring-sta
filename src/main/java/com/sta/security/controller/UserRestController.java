@@ -44,7 +44,12 @@ public class UserRestController {
 		User loginUser = userService.getLoginUserByLoginId(auth.getName());
 		return ResponseEntity.ok(loginUser);
 	}
-
+	@GetMapping
+	public ResponseEntity<User> user(Long id){
+		User user = userService.getUser(id);
+		return ResponseEntity.ok(user);
+	
+	}
 	@PostMapping("/upload")
 	public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
 

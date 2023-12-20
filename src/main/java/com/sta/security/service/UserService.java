@@ -80,7 +80,17 @@ public class UserService {
 
 		return optionalUser.get();
 	}
+	public User getUser(Long id) {
+		if (id == null)
+			return null;
 
+		Optional<User> optionalUser = userRepository.findById(id);
+		if (optionalUser.isEmpty())
+			return null;
+
+		return optionalUser.get();
+	}
+	
 	@Transactional
 	public String userUpdate(UserUpdateDTO updateDTO) {
 		User user = userRepository.findByUserid(updateDTO.getUserid())
