@@ -58,6 +58,10 @@ public class BoardService {
 		
 		return list;
 	};
+	public List<BoardResponseDTO> mypageList(Long id){
+		List<Board> list = boardRepository.findAllByUser_Id(id);
+		return list.stream().sorted(Comparator.comparing(Board::getCreatedAt).reversed()).map(BoardResponseDTO::new).collect(Collectors.toList());
+	}
 	
 	public List<String> boardDeleteImgSet(String userId) {
 		User user = userRepository.findByUserid(userId)

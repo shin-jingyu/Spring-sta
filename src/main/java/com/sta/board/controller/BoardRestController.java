@@ -59,7 +59,11 @@ public class BoardRestController {
 		return ResponseEntity.ok(list);
 	}
 
-	
+	@GetMapping("/mypageHover")
+	public ResponseEntity<List<BoardResponseDTO>> mypageHover(Long id){
+		List<BoardResponseDTO> list = boardService.mypageList(id);
+		return ResponseEntity.ok(list);
+	}
 
 
 	@PostMapping("/boardimg")

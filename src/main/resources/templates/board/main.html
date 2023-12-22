@@ -52,7 +52,7 @@
 						</h4>
 					</a>
 					</br>
-					
+
 					<a class="list-group-item" style="background-color: #f0f0f0;" type="button" data-bs-toggle="modal"
 						data-bs-target="#Modal" data-bs-whatever="@mdo">
 						<h4><i class="bi bi-plus-square"></i> 글작성 </h4>
@@ -198,16 +198,16 @@
 
 
 
+		<div id="hover-element">
 
+		</div>
 
 
 
 		<div id="boardupdatemodal">
 
 		</div>
-		<div id="hover-element">
 
-		</div>
 	</div>
 
 </body>
@@ -215,9 +215,8 @@
 </html>
 
 <script th:inline="javascript">
-	
-	
-	
+
+
 	$(document).ready(function () {
 		// 서버 API의 URL 및 필요한 HTML 엘리먼트 가져오기
 		const apiURL = '/api/board';
@@ -233,6 +232,10 @@
 		const defaultImage = '/uploads/final/main.jpg';
 		const modal2 = $('#modal2');
 		const friend = $('#friend');
+		let timerOut;
+
+
+
 
 
 
@@ -252,6 +255,7 @@
 						const userAll = userList[i];
 
 						friend.append(`
+						<div class="hover-element" data-userId="${userAll.id}" data-nickname="${userAll.nickname}">
 				            <div id="row-follow-${userAll.id}" class="row shadow-sm m-4 d-flex align-items-center justify-content-center">
 				                <div class="col-3">
 				                    <img src="${userAll.img ? userAll.img : defaultImage}" style="width:45px; height:45px; border-radius:50%; margin-right:10px;">
@@ -265,6 +269,9 @@
 				                </div>
 				               
 				            </div>
+				         </div>    
+				         <div id="hovers-${userAll.id}">
+						 </div>    	 
 				        `);
 
 						const userfollow = $(`#follow-${userAll.id}`);
@@ -335,6 +342,7 @@
 					success: function (list) {
 
 						contentid.append(`
+						
 							<div class="container " style="background-color: white; width:1000px;" >
 								
 								<div class="row ">
@@ -352,7 +360,7 @@
 							`);
 						const gridid = $('#searchGrid');
 						list.forEach(function (boardLists) {
-
+							console.log(boardLists);
 							const searchboardLists = [boardLists.boardimg1, boardLists.boardimg2, boardLists.boardimg3, boardLists.boardimg4, boardLists.boardimg5].filter(Boolean);
 							gridid.append(`
 								<div class="col-4 shadow" id="search-${boardLists.boardid}" data-bs-target="#search-modal-${boardLists.boardid}">
@@ -362,9 +370,13 @@
 									<div class="modal-dialog modal-dialog-centered modal-xl">
 										<div class="modal-content">
 											
+											<div class="hover-element" data-userId="${boardLists.id}" data-nickname="${boardLists.nickname}">
 											<div class="modal-header">
 												<h5 class="modal-title"><img src="${boardLists.img ? boardLists.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px;">${boardLists.nickname}</h5>
 												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div id="hovers-${boardLists.id}">
+											</div>
 											</div>
 											
 											<div class="modal-body">
@@ -790,15 +802,21 @@
 							</div>
 						`);
 						user.forEach(function (list) {
-							userList.append(`
-							<div class="card" style="margin-top:10px;" >
-						      <div class="card-body">
-						        <h5 class="card-title"> <img src="${list.img ? list.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">	
-													${list.nickname}</h5>
-						        <p class="card-text">${list.text ? list.text : ""}</p>
-						      </div>
-						    </div>
-						`);
+							if (list.id != loginUser.id) {
+								userList.append(`
+								<div class="hover-element" data-userId="${list.id}" data-nickname="${list.nickname}">
+								<div class="card" style="margin-top:10px;" >
+							      <div class="card-body">
+							        <h5 class="card-title"> <img src="${list.img ? list.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">	
+														${list.nickname}</h5>
+							        <p class="card-text">${list.text ? list.text : ""}</p>
+							      </div>
+							    </div>
+							    </div>
+							    <div id="hovers-${list.id}">
+							 	</div>    	 
+							`);
+							};
 						});
 
 
@@ -920,7 +938,10 @@
 									<div class="container text-center">
 										<div id="row-follow-${youidList.user.id}" class="row shadow-sm m-4 d-flex align-items-center justify-content-center">
 											<div class="col-3">
+												<div class="hover-element" data-userId="${youidList.user.id}" data-nickname="${youidList.user.nickname}">
 												<img src="${youidList.user.img ? youidList.user.img : defaultImage}" style="width:45px; height:45px; border-radius:50%; margin-right:10px;">
+												</div>
+												<div id="hovers-${youidList.user.id}"></div>
 											</div>
 											<div class="col-6">
 												<h5 class="card-title">${youidList.user.nickname}</h5>
@@ -1009,7 +1030,10 @@
 								<div class="container text-center">
 									<div id="row-follow-${myidList.user.id}" class="row shadow-sm m-4 d-flex align-items-center justify-content-center">
 										<div class="col-3">
+											<div class="hover-element" data-userId="${myidList.user.id}" data-nickname="${myidList.user.nickname}">
 											<img src="${myidList.user.img ? myidList.user.img : defaultImage}" style="width:45px; height:45px; border-radius:50%; margin-right:10px;">
+											</div>
+											<div id="hovers-${myidList.user.id}"></div>
 										</div>
 										<div class="col-6">
 											<h5 class="card-title">${myidList.user.nickname}</h5>
@@ -1715,10 +1739,15 @@
 					mainboard.append(`
 		                <div class="card" id="card">
 		                    <div class="card-header " style="display: flex; justify-content: space-between; align-items: center;">
+		                        <div class="hover-element" data-userId="${item.id}" data-nickname="${item.nickname}" data-boardid="${item.boardid}">
 		                        <div style="display: flex; align-items: center;">
-		                            <img src="${item.img ? item.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
+									<img src="${item.img ? item.img : defaultImage}" style="width:40px ; height: 40px; border-radius: 50%; margin-right: 10px; border: 1px solid #000;">
 		                            <h5 style="margin: 0;">${item.nickname} • ${item.timeDifference}</h5>
 		                        </div>
+		                            
+		                        </div>
+		                        <div id="hovers-${item.boardid}">
+								</div>	
 		                        ${loggedInUserNickname === item.nickname ? `
 		                            <button type="button" style="float: right;" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#${modalId}">
 		                                •••
@@ -1727,7 +1756,7 @@
 		                            <div class="modal-dialog modal-dialog-centered ">
 		                                <div class="modal-content">
 		                                    <ul class="list-group ">
-		                                        <!-- 각 수정 버튼에 고유한 ID 할당 -->
+		                                        
 		                                       <li id="${boardUpdateBtnId}" data-bs-toggle="modal" data-bs-target="#update-${item.boardid}" data-bs-info='${itemString}'class="list-group-item list-group-item-action text-center fw-semibold ">수정하기</li>
 		
 		                                        <li id="delete-${boardUpdateBtnId}"  class="list-group-item list-group-item-action text-center fw-semibold ">삭제하기
@@ -2386,6 +2415,210 @@
 			var boardid = $(this).data('boardid');
 			showDetail(boardid);
 		});
+
+
+
+		$(document).on('mouseover', '.hover-element', function () {
+			const userId = $(this).attr('data-userId');
+			const nickname = $(this).attr('data-nickname');
+			const boardid = $(this).attr('data-boardid');
+			clearTimeout(timerOut);
+			timerIn = setTimeout(function () {
+				hovers({userId: userId, nickname: nickname, boardid: boardid});
+			}, 1000);
+		});
+
+		$(document).on('mouseout', '.hover-element', function () {
+			const userId = $(this).attr('data-userId');
+			const boardid = $(this).attr('data-boardid');
+			clearTimeout(timerIn);
+			timerOut = setTimeout(function () {
+				hidePopup({userId: userId, boardid: boardid});
+			}, 2000);
+		});
+		function hidePopup(options) {
+			const userId = options.userId;
+			const boardid = options.boardid;
+			if (boardid === undefined) {
+				$(`#hovers-${userId}`).empty();
+				$(`#hovers-${userId}`).hide();
+			} else {
+				$(`#hovers-${boardid}`).empty();
+				$(`#hovers-${boardid}`).hide();
+			}
+
+		}
+
+
+		function hovers(options) {
+			const userId = options.userId;
+			const nickname = options.nickname;
+			const boardid = options.boardid;
+
+			let hoverDiv;
+			if (boardid === undefined) {
+
+				hoverDiv = $(`#hovers-${userId}`);
+			} else {
+
+				hoverDiv = $(`#hovers-${boardid}`);
+			}
+
+
+
+			hoverDiv.empty();
+			hoverDiv.css({
+				zIndex: '9999',
+				display: 'block',
+				position: 'fixed',
+				backgroundColor: '#fff',
+				border: '1px solid #ccc',
+				padding: '10px',
+				width: '620px',
+
+			});
+			hoverDiv.append(`
+	
+			
+				<div class=" container text-center">
+					<div class="row border-bottom d-flex align-items-center justify-content-center">
+						<div class="col-6 " id="hovers-userInfo-${userId}">
+							
+						</div>
+						<div class="col-2 " id="hovers-boardCount-${userId}">
+							
+						</div>
+						<div class="col-2 " id="hovers-followerCount-${userId}">
+							
+						</div>
+						<div class="col-2 " id="hovers-followCount-${userId}">
+							
+						</div>
+					</div>
+					<div class="row " id = "hovers-board-${userId}" style="width:600px; ">
+		
+			
+					</div>
+					<div class="row" id = "hovers-check-${userId}" style="margin-top:5px;">
+		
+		
+					</div>
+				</div>
+		
+			
+
+		`);
+
+			$.get(`/security-login?id=${userId}`, function (user) {
+				$(`#hovers-userInfo-${userId}`).empty();
+				$(`#hovers-userInfo-${userId}`).append(`
+					<img src="${user.img ? user.img : defaultImage}" class='rounded' style="width:100px; height:100px; padding: 5px;">
+					<a style="font-size: 1.2em;">${user.nickname}</a>
+				`);
+			});
+			$.get(`/api/board/count?id=${userId}`, function (boardCount) {
+				$(`#hovers-boardCount-${userId}`).empty();
+				$(`#hovers-boardCount-${userId}`).append(`
+					<h5 >게시물 ${boardCount}</h5>
+				`);
+			});
+			$.get(`/api/follow/count?myid=${userId}`, function (follow) {
+				$(`#hovers-followerCount-${userId}`).empty();
+				$(`#hovers-followerCount-${userId}`).append(`
+					<h5 >팔로워 ${follow.youidCount}</h5>
+				`);
+				$(`#hovers-followCount-${userId}`).empty();
+				$(`#hovers-followCount-${userId}`).append(`
+					<h5 >팔로우 ${follow.myidCount}</h5>
+				`);
+			});
+			$.get(`/api/board/mypageHover?id=${userId}`, function (board) {
+				$(`#hovers-board-${userId}`).empty();
+				const limit = 6; // 원하는 반복 횟수 설정
+				for (let i = 0; i < Math.min(limit, board.length); i++) {
+					const boardList = board[i];
+					$(`#hovers-board-${userId}`).append(`
+					<div class="col-4 "style="margin-top:5px;" >
+						<img src="${boardList.boardimg1}" class="img-thumbnail" style="width:200px ; height: 200px; ">
+					</div>
+					`);
+
+				}
+
+
+
+			});
+			$.get(`/api/follow?myid=${loginUser.id}&&youid=${userId}`, function (check) {
+				$(`#hovers-check-${userId}`).empty();
+
+				if (check == 2) {
+					$(`#hovers-check-${userId}`).append(`
+						<div class="col">
+							<button type="button"id="hovers-follow-post-${userId}" class="btn btn-primary "style="width:100%;">친구</button>
+						</div>
+					`);
+				} else if (check == 1) {
+					$(`#hovers-check-${userId}`).append(`
+						<div class="col">
+							<button type="button"id="hovers-follow-post-${userId}" class="btn btn-primary "style="width:100%;">팔로잉</button>
+						</div>
+					`);
+
+				} else {
+					$(`#hovers-check-${userId}`).append(`
+						<div class="col" >
+							<button type="button" id="hovers-follow-post-${userId}" class="btn btn-primary "style="width:100%;">팔로우</button>
+						</div>
+					`);
+
+				}
+				$(`#hovers-follow-post-${userId}`).on('click', function () {
+					if (check === 0) {
+						$.ajax({
+							url: `/api/follow`,
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								myid: loginUser.id,
+								youid: userId,
+								my_userid: loginUser.userid,
+								you_userid: nickname
+							}),
+							success: function () {
+								recommend();
+								hidePopup();
+							}
+						});
+					} else {
+						$.ajax({
+							url: `/api/follow/delete `,
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								myid: loginUser.id,
+								youid: userId,
+							}),
+							success: function () {
+								follows();
+							}
+						});
+					}
+
+				});
+
+
+			});
+
+			hoverDiv.show();
+
+
+		}
+
+
+
+
+
+
 
 	});
 </script>

@@ -23,6 +23,7 @@ public class BoardResponseDTO {
 	private String nickname;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	private Long id;
 	private String userid;
 	private String img;
 	private String timeDifference;
@@ -44,6 +45,7 @@ public class BoardResponseDTO {
 		this.content = board.getContent();
 		this.nickname = board.getUser().getNickname();
 		this.userid = board.getUser().getUserid();
+		this.id = board.getUser().getId();
 		this.createdAt = board.getCreatedAt();
 		this.updatedAt = board.getUpdatedAt();
 		this.img = board.getUser().getImg();
