@@ -9,23 +9,23 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import com.sta.security.domain.UserRole;
 import com.sta.security.service.PrincipalOauth2UserService;
+import com.sta.websocket.config.WebSocketChatHandler;
 
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig     {
+	
 	private final PrincipalOauth2UserService principalOauth2UserService;
 	
-	  @Bean
-	  public WebSecurityCustomizer configure() {
-	      return (web) -> web.ignoring()
-	              .requestMatchers("/static/**","/static/uploads/**","/static/board/**");
-	  }
+	 
 	  
 	  @Bean
 	  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -66,6 +66,9 @@ public class WebSecurityConfig {
 		  return http.build();
 		          
 	  }
-	 
+
+
+
+	
 	    
 }
