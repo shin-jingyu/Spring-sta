@@ -29,9 +29,10 @@ public class ChatRoom {
 	private Long chatRoom_id;
 	
 	@Column(nullable = false)
-    private String roomName;
+    private Long userId1;
 	
-	
+	@Column(nullable = false)
+    private Long userId2;
 	
 	
 	

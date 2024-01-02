@@ -8,11 +8,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomRequestDTO {
-	private String roomName;
+	private Long chatRoom_id;
+	private Long userId1;
+	private Long userId2;
 	
 	public ChatRoom toEntity() {
 		return ChatRoom.builder()
-				.roomName(roomName)
+				.userId1(userId1)
+				.userId2(userId2)
 				.build();
 	}
 	

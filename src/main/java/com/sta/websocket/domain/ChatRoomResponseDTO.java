@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomResponseDTO {
-	 private String roomName;
+	private Long chatRoom_id;
+	private Long userId1;
+	private Long userId2;
 	 
 }
