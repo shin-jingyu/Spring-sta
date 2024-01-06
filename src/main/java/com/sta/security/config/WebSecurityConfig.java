@@ -14,7 +14,6 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 import com.sta.security.domain.UserRole;
 import com.sta.security.service.PrincipalOauth2UserService;
-import com.sta.websocket.config.WebSocketChatHandler;
 
 import lombok.RequiredArgsConstructor;
 

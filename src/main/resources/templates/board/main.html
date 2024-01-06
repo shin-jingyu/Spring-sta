@@ -59,7 +59,6 @@
 					</a>
 					</br>
 
-
 					<div class="dropdown">
 						<a class="list-group-item " type="button" data-bs-toggle="dropdown" aria-expanded="false"
 							style="background-color: #f0f0f0;">
@@ -234,13 +233,6 @@
 		const friend = $('#friend');
 		let timerOut;
 
-
-
-
-
-
-
-
 		recommend();
 		function recommend() {
 			$.ajax({
@@ -360,7 +352,7 @@
 							`);
 						const gridid = $('#searchGrid');
 						list.forEach(function (boardLists) {
-							console.log(boardLists);
+							
 							const searchboardLists = [boardLists.boardimg1, boardLists.boardimg2, boardLists.boardimg3, boardLists.boardimg4, boardLists.boardimg5].filter(Boolean);
 							gridid.append(`
 								<div class="col-4 shadow" id="search-${boardLists.boardid}" data-bs-target="#search-modal-${boardLists.boardid}">
@@ -932,7 +924,7 @@
 							followList.youidList.forEach(function (youidList) {
 
 
-								console.log(youidList);
+							
 
 								followerbody.append(`
 									<div class="container text-center">
@@ -956,7 +948,7 @@
 									url: `/api/follow?myid=${loginUser.id}&&youid=${youidList.myid}`,
 									type: 'GET',
 									success: function (follower) {
-										console.log(follower);
+									
 										if (follower === 2) {
 											$(`#follow-${youidList.user.id}`).empty();
 											$(`#follow-${youidList.user.id}`).append(`
