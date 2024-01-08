@@ -1,4 +1,4 @@
-#Spring_sta
+# Spring_sta
    - 이미지를 사용한 앨범형 게시판
 
 # 🧐 배경
