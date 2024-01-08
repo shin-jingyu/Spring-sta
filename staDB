@@ -1,0 +1,51 @@
+
+
+-----------------------------------테이블 생성 -------------------------------------------
+CREATE TABLE `user` (
+	`id`	int	NOT NULL	COMMENT 'unique',
+	`userid`	varchar(255)	NOT NULL	COMMENT 'unique',
+	`password`	varchar(255)	NOT NULL,
+	`nickname`	TIMESTAMP	NOT NULL,
+	`text`	varchar(255)	NULL,
+	`img`	varchar(512)	NULL,
+	`role`	varchar(255)	NOT NULL,
+	`provider`	varchar(255)	NULL,
+	`provider_id`	varchar(255)	NULL
+);
+
+CREATE TABLE `board` (
+	`boardid`	int	NOT NULL	COMMENT 'unique',
+	`id`	int	NOT NULL	COMMENT 'unique',
+	`boardimg1`	varchar(255)	NOT NULL,
+	`boardimg2`	varchar(255)	NULL,
+	`boardimg3`	varchar(255)	NULL,
+	`boardimg4`	varchar(255)	NULL,
+	`boardimg5`	varchar(255)	NULL,
+	`content`	varchar(255)	NULL,
+	`created_at`	DATETIME(6)	NULL,
+	`updated_at`	DATETIME(6)	NULL
+);
+
+CREATE TABLE `likes` (
+	`likes_id`	int	NOT NULL	COMMENT 'unique',
+	`id`	int	NOT NULL	COMMENT 'unique',
+	`boardid`	int	NOT NULL	COMMENT 'unique'
+);
+
+CREATE TABLE `follow` (
+	`follow_id`	int	NOT NULL	COMMENT 'unique',
+	`myid`	int	NOT NULL,
+	`youid`	int	NOT NULL,
+	`my_userid`	varchar(255)	NOT NULL,
+	`you_userid`	varchar(255)	NOT NULL
+);
+
+CREATE TABLE `ripple` (
+	`ri_id`	int	NOT NULL	COMMENT 'unique',
+	`boardid`	int	NOT NULL	COMMENT 'unique',
+	`id`	int	NOT NULL	COMMENT 'unique',
+	`ri_content`	varchar(255)	NOT NULL,
+	`ri_created_at`	datetime(6)	NOT NULL,
+	`ri_updated_at`	datetime(6)	NULL
+);
+-----------------------------------------------------------------------------------------
