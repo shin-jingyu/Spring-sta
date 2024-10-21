@@ -14,6 +14,10 @@ STA 게시판 프로젝트는 사용자 인증, 게시물 작성 및 관리, 댓
 - **빌드 툴**: Gradle
 - **버전 관리**: GitHub
 
+## ⚙️ ERD 설계
+![image](https://github.com/user-attachments/assets/6aae0f8f-d0dd-4ab1-9512-4e2b41da54b9)
+
+
 ## ✨ 주요 기능
 
 1. **사용자 인증 및 관리**
